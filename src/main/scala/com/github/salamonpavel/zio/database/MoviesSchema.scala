@@ -37,7 +37,7 @@ object MoviesSchemaImpl {
         Movie(r.<<, r.<<, r.<<)
       }
 
-      GetResult(x => converter(x))
+      GetResult(converter)
     }
   }
 

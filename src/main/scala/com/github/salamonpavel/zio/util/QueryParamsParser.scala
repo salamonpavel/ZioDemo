@@ -1,25 +1,35 @@
 package com.github.salamonpavel.zio.util
 
-import com.github.salamonpavel.zio.exception.ParseError
+import com.github.salamonpavel.zio.exception.{AppError, ParameterNumberFormatError, RequiredParameterMissingError}
 import zio.{ULayer, ZIO, ZLayer}
 import zio.http.QueryParams
 
+import scala.util.Try
+
 trait QueryParamsParser {
-  def parseRequiredString(queryParams: QueryParams, param: String): ZIO[Any, ParseError, String]
+  def parseRequiredStringIntoInt(queryParams: QueryParams, param: String): ZIO[Any, AppError, Int]
 }
 
 object QueryParamsParser {
-  def parseRequiredString(queryParams: QueryParams, param: String): ZIO[QueryParamsParser, ParseError, String] = {
-    ZIO.serviceWithZIO[QueryParamsParser](_.parseRequiredString(queryParams, param))
+  def parseRequiredStringIntoInt(
+                                  queryParams: QueryParams,
+                                  param: String
+                                ): ZIO[QueryParamsParser, AppError, Int] = {
+    ZIO.serviceWithZIO[QueryParamsParser](_.parseRequiredStringIntoInt(queryParams, param))
   }
 }
 
 class QueryParamsParserImpl extends QueryParamsParser {
-  override def parseRequiredString(queryParams: QueryParams, param: String): ZIO[Any, ParseError, String] = {
-    ZIO.fromOption(queryParams.get(param)).foldZIO(
-      _ => ZIO.fail(ParseError(s"Required parameter not provided: $param")),
-      chunk => ZIO.succeed(chunk.asString)
-    )
+  override def parseRequiredStringIntoInt(
+                                           queryParams: QueryParams,
+                                           param: String
+                                         ): ZIO[Any, AppError, Int] = {
+    for {
+      paramStr <- ZIO.fromOption(queryParams.get(param))
+        .mapError(_ => RequiredParameterMissingError(s"Missing parameter: $param"))
+      paramInt <- ZIO.fromTry(Try(paramStr.asString.toInt))
+        .mapError(_ => ParameterNumberFormatError(s"Invalid integer parameter: $paramStr"))
+    } yield paramInt
   }
 }
 

@@ -36,7 +36,7 @@ object ActorsSchemaImpl {
       def converter(r: PositionedResult): Actor = {
         Actor(r.<<, r.<<, r.<<)
       }
-      GetResult(x => converter(x))
+      GetResult(converter)
     }
   }
 
