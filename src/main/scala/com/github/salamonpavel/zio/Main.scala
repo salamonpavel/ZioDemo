@@ -8,8 +8,17 @@ import com.github.salamonpavel.zio.util.QueryParamsParserImpl
 import zio.http.Server
 import zio.{Scope, ZIO, ZIOAppArgs, ZIOAppDefault}
 
+/**
+ *  The main object of the application.
+ */
 object Main extends ZIOAppDefault {
-  override def run: ZIO[Any with ZIOAppArgs with Scope, Any, Any] =
+
+  /**
+   *  The main method of the application.
+   *
+   *  @return A ZIO effect that represents the entire application. The effect requires an environment with ZIOAppArgs and Scope, can fail with any Throwable, and does not produce a value.
+   */
+  override def run: ZIO[Any with ZIOAppArgs with Scope, Throwable, Any] =
     Server
       .serve(Routes.allRoutes)
       .provide(
