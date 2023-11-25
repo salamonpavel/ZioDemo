@@ -1,5 +1,6 @@
 package com.github.salamonpavel.zio.controller
 
+import com.github.salamonpavel.zio.exception.AppError
 import com.github.salamonpavel.zio.model.Actor
 import com.github.salamonpavel.zio.service.ActorsService
 import com.github.salamonpavel.zio.util.{Constants, QueryParamsParser}
