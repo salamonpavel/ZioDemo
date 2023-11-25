@@ -12,19 +12,20 @@ import za.co.absa.fadb.slick.{SlickFunction, SlickPgEngine}
 import zio.{ZIO, ZLayer}
 
 /**
- * A trait representing the schema for movies.
+ *  A trait representing the schema for movies.
  */
 trait MoviesSchema {
+
   /**
-   * Gets a movie by ID.
+   *  Gets a movie by ID.
    *
-   * @return An instance of GetMovieById.
+   *  @return An instance of GetMovieById.
    */
   def getMovieById: GetMovieById
 }
 
 /**
- * An implementation of the MoviesSchema trait.
+ *  An implementation of the MoviesSchema trait.
  */
 class MoviesSchemaImpl(implicit dbEngine: SlickPgEngine) extends DBSchema(Some(schema)) with MoviesSchema {
   import MoviesSchemaImpl._
@@ -35,10 +36,11 @@ class MoviesSchemaImpl(implicit dbEngine: SlickPgEngine) extends DBSchema(Some(s
 object MoviesSchemaImpl {
 
   /**
-   * A class representing a function to get a movie by ID.
+   *  A class representing a function to get a movie by ID.
    */
   class GetMovieById(implicit override val schema: DBSchema, val dbEngine: SlickPgEngine)
-    extends DBOptionalResultFunction[Int, Movie, SlickPgEngine] with SlickFunction[Int, Movie] {
+      extends DBOptionalResultFunction[Int, Movie, SlickPgEngine]
+      with SlickFunction[Int, Movie] {
 
     override def fieldsToSelect: Seq[String] = super.fieldsToSelect ++ Seq("movie_id", "movie_name", "movie_length")
 
@@ -56,12 +58,12 @@ object MoviesSchemaImpl {
   }
 
   /**
-   * A ZLayer that provides live implementation of MoviesSchema.
+   *  A ZLayer that provides live implementation of MoviesSchema.
    */
   val live: ZLayer[PostgresDatabaseProvider, Nothing, MoviesSchema] = ZLayer {
-      for {
-        dbProvider <- ZIO.service[PostgresDatabaseProvider]
-      } yield new MoviesSchemaImpl()(dbProvider.dbEngine)
-    }
+    for {
+      dbProvider <- ZIO.service[PostgresDatabaseProvider]
+    } yield new MoviesSchemaImpl()(dbProvider.dbEngine)
+  }
 
 }

@@ -8,7 +8,7 @@ import zio.{ULayer, ZLayer}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
- * A class representing a provider of a Postgres database.
+ *  A class representing a provider of a Postgres database.
  */
 class PostgresDatabaseProvider {
   val config: Config = ConfigFactory.parseResources("application.properties")
@@ -18,8 +18,9 @@ class PostgresDatabaseProvider {
 }
 
 object PostgresDatabaseProvider {
+
   /**
-   * A ZLayer that provides live implementation of PostgresDatabaseProvider.
+   *  A ZLayer that provides live implementation of PostgresDatabaseProvider.
    */
   val live: ULayer[PostgresDatabaseProvider] = ZLayer.succeed(new PostgresDatabaseProvider)
 }

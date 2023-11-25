@@ -7,24 +7,26 @@ import zio.http.QueryParams
 import zio.{ZIO, ZLayer}
 
 /**
- * A trait representing the controller for actors.
+ *  A trait representing the controller for actors.
  */
 trait ActorsController {
+
   /**
-   * Finds an actor by ID.
+   *  Finds an actor by ID.
    *
-   * @param queryParams The query parameters from the HTTP request.
-   * @return A ZIO effect that produces an Option of Actor. The effect may fail with a Throwable if the ID is not valid.
+   *  @param queryParams The query parameters from the HTTP request.
+   *  @return A ZIO effect that produces an Option of Actor. The effect may fail with a Throwable if the ID is not valid.
    */
   def findById(queryParams: QueryParams): ZIO[Any, Throwable, Option[Actor]]
 }
 
 object ActorsController {
+
   /**
-   * Finds an actor by ID. This is an accessor method that requires an ActorsController.
+   *  Finds an actor by ID. This is an accessor method that requires an ActorsController.
    *
-   * @param queryParams The query parameters from the HTTP request.
-   * @return A ZIO effect that requires an ActorsController and produces an Option of Actor. 
+   *  @param queryParams The query parameters from the HTTP request.
+   *  @return A ZIO effect that requires an ActorsController and produces an Option of Actor.
    *         The effect may fail with a Throwable if the ID is not valid.
    */
   def findById(queryParams: QueryParams): ZIO[ActorsController, Throwable, Option[Actor]] = {
@@ -33,14 +35,16 @@ object ActorsController {
 }
 
 /**
- * An implementation of the ActorsController trait.
+ *  An implementation of the ActorsController trait.
  */
-class ActorsControllerImpl(queryParamsParser: QueryParamsParser, actorsService: ActorsService) extends ActorsController {
+class ActorsControllerImpl(queryParamsParser: QueryParamsParser, actorsService: ActorsService)
+    extends ActorsController {
+
   /**
-   * Finds an actor by ID.
+   *  Finds an actor by ID.
    *
-   * @param queryParams The query parameters from the HTTP request.
-   * @return A ZIO effect that produces an Option of Actor. The effect may fail with a Throwable if the ID is not valid.
+   *  @param queryParams The query parameters from the HTTP request.
+   *  @return A ZIO effect that produces an Option of Actor. The effect may fail with a Throwable if the ID is not valid.
    */
   override def findById(queryParams: QueryParams): ZIO[Any, Throwable, Option[Actor]] = {
     for {
@@ -51,8 +55,9 @@ class ActorsControllerImpl(queryParamsParser: QueryParamsParser, actorsService: 
 }
 
 object ActorsControllerImpl {
+
   /**
-   * A ZLayer that provides live implementation of ActorsController.
+   *  A ZLayer that provides live implementation of ActorsController.
    */
   val live: ZLayer[QueryParamsParser with ActorsService, Nothing, ActorsController] =
     ZLayer {
