@@ -87,3 +87,12 @@ _site
 utils/resources/*.conf
 
 .bsp
+/.bloop/bloop.settings.json
+/project/.bloop/bloop.settings.json
+/.metals/metals.log
+/.metals/metals.mv.db
+/project/project/metals.sbt
+/project/metals.sbt
+/.bloop/root.json
+/.bloop/root-test.json
+/project/.bloop/ziodemo-build.json
