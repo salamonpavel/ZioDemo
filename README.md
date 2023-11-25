@@ -119,3 +119,45 @@ VALUES
 ('Movie 9', 105),
 ('Movie 10', 125);
 ```
+
+## Database Functions
+
+This application uses two PostgreSQL functions: `runs.get_actor_by_id` and `runs.get_movie_by_id`. These functions are used to retrieve an actor or a movie by their ID.
+
+Here's how you can create these functions:
+
+```sql
+-- Function to get an actor by ID
+CREATE OR REPLACE FUNCTION runs.get_actor_by_id(
+    i_actor_id              INTEGER
+) RETURNS TABLE (
+    actor_id                INTEGER,
+    first_name              VARCHAR(150),
+    last_name               VARCHAR(150)
+) AS
+$$
+BEGIN
+    RETURN QUERY SELECT A.actor_id, A.first_name, A.last_name
+    FROM runs.actors A
+    WHERE A.actor_id = i_actor_id;
+END;
+$$
+LANGUAGE plpgsql;
+
+-- Function to get a movie by ID
+CREATE OR REPLACE FUNCTION runs.get_movie_by_id(
+    i_movie_id              INTEGER
+) RETURNS TABLE (
+    movie_id                INTEGER,
+    movie_name              VARCHAR(100),
+    movie_length            INTEGER
+) AS
+$$
+BEGIN
+    RETURN QUERY SELECT M.movie_id, M.movie_name, M.movie_length
+    FROM runs.movies M
+    WHERE M.movie_id = i_movie_id;
+END;
+$$
+LANGUAGE plpgsql;
+```
