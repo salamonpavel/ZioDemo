@@ -1,5 +1,6 @@
 package com.github.salamonpavel.zio.controller
 
+import com.github.salamonpavel.zio.exception.AppError
 import com.github.salamonpavel.zio.model.Actor
 import com.github.salamonpavel.zio.service.ActorsService
 import com.github.salamonpavel.zio.util.{Constants, QueryParamsParser}
@@ -11,13 +12,13 @@ import zio.{ZIO, ZLayer}
  */
 trait ActorsController {
 
-  /**
-   *  Finds an actor by ID.
-   *
-   *  @param queryParams The query parameters from the HTTP request.
-   *  @return A ZIO effect that produces an Option of Actor. The effect may fail with a Throwable if the ID is not valid.
-   */
-  def findById(queryParams: QueryParams): ZIO[Any, Throwable, Option[Actor]]
+/**
+ *  Finds an actor by ID.
+ *
+ *  @param queryParams The query parameters from the HTTP request.
+ *  @return A ZIO effect that produces an Option of Actor. The effect may fail with an AppError.
+ */
+  def findById(queryParams: QueryParams): ZIO[Any, AppError, Option[Actor]]
 }
 
 object ActorsController {
@@ -27,9 +28,9 @@ object ActorsController {
    *
    *  @param queryParams The query parameters from the HTTP request.
    *  @return A ZIO effect that requires an ActorsController and produces an Option of Actor.
-   *         The effect may fail with a Throwable if the ID is not valid.
+   *          The effect may fail with an AppError.
    */
-  def findById(queryParams: QueryParams): ZIO[ActorsController, Throwable, Option[Actor]] = {
+  def findById(queryParams: QueryParams): ZIO[ActorsController, AppError, Option[Actor]] = {
     ZIO.serviceWithZIO[ActorsController](_.findById(queryParams))
   }
 }
@@ -40,13 +41,8 @@ object ActorsController {
 class ActorsControllerImpl(queryParamsParser: QueryParamsParser, actorsService: ActorsService)
     extends ActorsController {
 
-  /**
-   *  Finds an actor by ID.
-   *
-   *  @param queryParams The query parameters from the HTTP request.
-   *  @return A ZIO effect that produces an Option of Actor. The effect may fail with a Throwable if the ID is not valid.
-   */
-  override def findById(queryParams: QueryParams): ZIO[Any, Throwable, Option[Actor]] = {
+  /
+  override def findById(queryParams: QueryParams): ZIO[Any, AppError, Option[Actor]] = {
     for {
       id <- queryParamsParser.parseRequiredInt(queryParams, Constants.ID)
       actor <- actorsService.findActorById(id)

@@ -1,5 +1,6 @@
 package com.github.salamonpavel.zio.controller
 
+import com.github.salamonpavel.zio.exception.AppError
 import com.github.salamonpavel.zio.model.Movie
 import com.github.salamonpavel.zio.service.MoviesService
 import com.github.salamonpavel.zio.util.{Constants, QueryParamsParser}
@@ -15,9 +16,9 @@ trait MoviesController {
    *  Finds a movie by ID.
    *
    *  @param queryParams The query parameters from the HTTP request.
-   *  @return A ZIO effect that produces an Option of Movie. The effect may fail with a Throwable if the ID is not valid.
+   *  @return A ZIO effect that produces an Option of Movie. The effect may fail with an AppError.
    */
-  def findById(queryParams: QueryParams): ZIO[Any, Throwable, Option[Movie]]
+  def findById(queryParams: QueryParams): ZIO[Any, AppError, Option[Movie]]
 }
 
 object MoviesController {
@@ -27,9 +28,9 @@ object MoviesController {
    *
    *  @param queryParams The query parameters from the HTTP request.
    *  @return A ZIO effect that requires a MoviesController and produces an Option of Movie.
-   *         The effect may fail with a Throwable if the ID is not valid.
+   *          The effect may fail with an AppError.
    */
-  def findById(queryParams: QueryParams): ZIO[MoviesController, Throwable, Option[Movie]] = {
+  def findById(queryParams: QueryParams): ZIO[MoviesController, AppError, Option[Movie]] = {
     ZIO.serviceWithZIO[MoviesController](_.findById(queryParams))
   }
 }
@@ -44,9 +45,9 @@ class MoviesControllerImpl(queryParamsParser: QueryParamsParser, moviesService: 
    *  Finds a movie by ID.
    *
    *  @param queryParams The query parameters from the HTTP request.
-   *  @return A ZIO effect that produces an Option of Movie. The effect may fail with a Throwable if the ID is not valid.
+   *  @return A ZIO effect that produces an Option of Movie. The effect may fail with an AppError.
    */
-  override def findById(queryParams: QueryParams): ZIO[Any, Throwable, Option[Movie]] = {
+  override def findById(queryParams: QueryParams): ZIO[Any, AppError, Option[Movie]] = {
     for {
       id <- queryParamsParser.parseRequiredInt(queryParams, Constants.ID)
       movie <- moviesService.findMovieById(id)
