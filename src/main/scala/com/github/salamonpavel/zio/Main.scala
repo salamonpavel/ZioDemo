@@ -1,8 +1,9 @@
 package com.github.salamonpavel.zio
 
 import com.github.salamonpavel.zio.controller.ActorsControllerImpl
+import com.github.salamonpavel.zio.database.{ActorsSchemaImpl, PostgresDatabaseProvider}
 import com.github.salamonpavel.zio.service.{ActorsRepositoryImpl, ActorsServiceImpl}
-import com.github.salamonpavel.zio.utils.QueryParamsParserImpl
+import com.github.salamonpavel.zio.util.QueryParamsParserImpl
 import zio.http.Server
 import zio.{Scope, ZIO, ZIOAppArgs, ZIOAppDefault}
 
@@ -12,9 +13,11 @@ object Main extends ZIOAppDefault {
       .serve(Routes.allRoutes)
       .provide(
         Server.default,
+        QueryParamsParserImpl.live,
         ActorsControllerImpl.live,
         ActorsServiceImpl.live,
         ActorsRepositoryImpl.live,
-        QueryParamsParserImpl.live
+        ActorsSchemaImpl.live,
+        PostgresDatabaseProvider.live
       )
 }

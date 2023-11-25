@@ -1,4 +1,4 @@
-package com.github.salamonpavel.zio.exceptions
+package com.github.salamonpavel.zio.exception
 
 sealed trait AppError extends Throwable
 
