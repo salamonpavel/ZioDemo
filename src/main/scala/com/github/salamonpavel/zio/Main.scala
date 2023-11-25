@@ -1,8 +1,8 @@
 package com.github.salamonpavel.zio
 
-import com.github.salamonpavel.zio.controller.ActorsControllerImpl
-import com.github.salamonpavel.zio.database.{ActorsSchemaImpl, PostgresDatabaseProvider}
-import com.github.salamonpavel.zio.service.{ActorsRepositoryImpl, ActorsServiceImpl}
+import com.github.salamonpavel.zio.controller.{ActorsControllerImpl, MoviesControllerImpl}
+import com.github.salamonpavel.zio.database.{ActorsSchemaImpl, MoviesSchemaImpl, PostgresDatabaseProvider}
+import com.github.salamonpavel.zio.service.{ActorsRepositoryImpl, ActorsServiceImpl, MoviesRepositoryImpl, MoviesServiceImpl}
 import com.github.salamonpavel.zio.util.QueryParamsParserImpl
 import zio.http.Server
 import zio.{Scope, ZIO, ZIOAppArgs, ZIOAppDefault}
@@ -18,6 +18,10 @@ object Main extends ZIOAppDefault {
         ActorsServiceImpl.live,
         ActorsRepositoryImpl.live,
         ActorsSchemaImpl.live,
+        MoviesControllerImpl.live,
+        MoviesServiceImpl.live,
+        MoviesRepositoryImpl.live,
+        MoviesSchemaImpl.live,
         PostgresDatabaseProvider.live
       )
 }
