@@ -12,12 +12,12 @@ import zio.{ZIO, ZLayer}
  */
 trait ActorsController {
 
-/**
- *  Finds an actor by ID.
- *
- *  @param queryParams The query parameters from the HTTP request.
- *  @return A ZIO effect that produces an Option of Actor. The effect may fail with an AppError.
- */
+  /**
+   *  Finds an actor by ID.
+   *
+   *  @param queryParams The query parameters from the HTTP request.
+   *  @return A ZIO effect that produces an Option of Actor. The effect may fail with an AppError.
+   */
   def findById(queryParams: QueryParams): ZIO[Any, AppError, Option[Actor]]
 }
 
