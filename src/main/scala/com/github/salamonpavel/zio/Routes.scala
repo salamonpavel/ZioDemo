@@ -4,10 +4,8 @@ import com.github.salamonpavel.zio.controller.{ActorsController, MoviesControlle
 import com.github.salamonpavel.zio.model.{Actor, Movie}
 import zio._
 import zio.http._
-import zio.json.{EncoderOps, JsonEncoder}
-import zio.http.codec.PathCodec.int
 import zio.http.model.{Method, Status}
-
+import zio.json.{EncoderOps, JsonEncoder}
 
 object Routes {
 
@@ -27,7 +25,8 @@ object Routes {
           .catchAll(handleError)
     }
 
-  val allRoutes: Http[MoviesController with ActorsController, Nothing, Request, Response] = actorsRoutes ++ moviesRoutes
+  val allRoutes: Http[MoviesController with ActorsController, Nothing, Request, Response] =
+    actorsRoutes ++ moviesRoutes
 
   private def responseFromOption[T: JsonEncoder](option: Option[T]): Response = option match {
     case Some(value) => Response.json(value.toJson)
