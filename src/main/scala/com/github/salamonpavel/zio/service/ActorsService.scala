@@ -1,27 +1,60 @@
 package com.github.salamonpavel.zio.service
 
+import com.github.salamonpavel.zio.exception.DatabaseError
 import com.github.salamonpavel.zio.model.Actor
 import zio.{ZIO, ZLayer}
 
+/**
+ *  A trait representing the service for actors.
+ */
 trait ActorsService {
-  def findActorById(id: Int): ZIO[Any, Throwable, Option[Actor]]
+
+  /**
+   *  Finds an actor by ID.
+   *
+   *  @param id The ID of the actor.
+   *  @return A ZIO effect that produces an Option of Actor. The effect may fail with a DatabaseError.
+   */
+  def findActorById(id: Int): ZIO[Any, DatabaseError, Option[Actor]]
 }
 
 object ActorsService {
-  def findActorById(id: Int): ZIO[ActorsService, Throwable, Option[Actor]] = {
+
+  /**
+   *  Finds an actor by ID. This is an accessor method that requires an ActorsService.
+   *
+   *  @param id The ID of the actor.
+   *  @return A ZIO effect that requires an ActorsService and produces an Option of Actor.
+   *         The effect may fail with a DatabaseError.
+   */
+  def findActorById(id: Int): ZIO[ActorsService, DatabaseError, Option[Actor]] = {
     ZIO.serviceWithZIO[ActorsService](_.findActorById(id))
   }
 }
 
+/**
+ *  An implementation of the ActorsService trait.
+ *
+ *  @param actorsRepository The ActorsRepository that this service will use to interact with the database.
+ */
 class ActorsServiceImpl(actorsRepository: ActorsRepository) extends ActorsService {
-  override def findActorById(id: Int): ZIO[Any, Throwable, Option[Actor]] = {
-    for {
-      actor <- actorsRepository.getActorById(id)
-    } yield actor
+
+  /**
+   *  Finds an actor by ID.
+   *
+   *  @param id The ID of the actor.
+   *  @return A ZIO effect that produces an Option of Actor. The effect may fail with a DatabaseError.
+   */
+  override def findActorById(id: Int): ZIO[Any, DatabaseError, Option[Actor]] = {
+    actorsRepository.getActorById(id)
   }
 }
 
 object ActorsServiceImpl {
+
+  /**
+   *  A ZLayer that provides a live implementation of ActorsService.
+   */
   val live: ZLayer[ActorsRepository, Nothing, ActorsService] =
     ZLayer {
       for {

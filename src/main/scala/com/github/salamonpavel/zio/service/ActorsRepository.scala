@@ -1,6 +1,7 @@
 package com.github.salamonpavel.zio.service
 
 import com.github.salamonpavel.zio.database.ActorsSchema
+import com.github.salamonpavel.zio.exception.DatabaseError
 import com.github.salamonpavel.zio.model.Actor
 import zio.{ZIO, ZLayer}
 
@@ -15,9 +16,10 @@ trait ActorsRepository {
    *  Gets an actor by ID. This is an accessor method that requires an ActorsRepository.
    *
    *  @param id The ID of the actor.
-   *  @return A ZIO effect that requires an ActorsRepository and produces an Option of Actor. The effect may fail with a Throwable if the ID is not valid.
+   *  @return A ZIO effect that requires an ActorsRepository and produces an Option of Actor.
+   *          The effect may fail with a DatabaseError.
    */
-  def getActorById(id: Int): ZIO[Any, Throwable, Option[Actor]]
+  def getActorById(id: Int): ZIO[Any, DatabaseError, Option[Actor]]
 }
 
 object ActorsRepository {
@@ -26,9 +28,10 @@ object ActorsRepository {
    *  Gets an actor by ID. This is an accessor method that requires an ActorsRepository.
    *
    *  @param id The ID of the actor.
-   *  @return A ZIO effect that requires an ActorsRepository and produces an Option of Actor. The effect may fail with a Throwable if the ID is not valid.
+   *  @return A ZIO effect that requires an ActorsRepository and produces an Option of Actor.
+   *          The effect may fail with a DatabaseError.
    */
-  def getActorById(id: Int): ZIO[ActorsRepository, Throwable, Option[Actor]] = {
+  def getActorById(id: Int): ZIO[ActorsRepository, DatabaseError, Option[Actor]] = {
     ZIO.serviceWithZIO[ActorsRepository](_.getActorById(id))
   }
 }
@@ -37,8 +40,17 @@ object ActorsRepository {
  *  An implementation of the ActorsRepository trait.
  */
 class ActorsRepositoryImpl(schema: ActorsSchema) extends ActorsRepository {
-  override def getActorById(id: Int): ZIO[Any, Throwable, Option[Actor]] = {
-    ZIO.fromFuture { implicit ec: ExecutionContext => schema.getActorById(id) }
+
+  /**
+   *  Gets an actor by ID.
+   *
+   *  @param id The ID of the actor.
+   *  @return A ZIO effect that produces an Option of Actor. The effect may fail with a DatabaseError.
+   */
+  override def getActorById(id: Int): ZIO[Any, DatabaseError, Option[Actor]] = {
+    ZIO
+      .fromFuture { implicit ec: ExecutionContext => schema.getActorById(id) }
+      .mapError(error => DatabaseError(error.getMessage))
   }
 }
 
