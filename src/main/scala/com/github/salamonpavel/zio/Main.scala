@@ -16,7 +16,7 @@ object Main extends ZIOAppDefault {
   /**
    *  The main method of the application.
    *
-   *  @return A ZIO effect that represents the entire application. The effect requires an environment with ZIOAppArgs and Scope, can fail with any Throwable, and does not produce a value.
+   *  @return A ZIO effect that represents the entire application.
    */
   override def run: ZIO[Any with ZIOAppArgs with Scope, Throwable, Any] =
     Server
