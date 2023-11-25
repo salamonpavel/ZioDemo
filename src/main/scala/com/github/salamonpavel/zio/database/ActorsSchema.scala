@@ -2,7 +2,7 @@ package com.github.salamonpavel.zio.database
 
 import com.github.salamonpavel.zio.database.ActorsSchemaImpl.GetActorById
 import com.github.salamonpavel.zio.model.Actor
-import com.github.salamonpavel.zio.util.Constants.schema
+import com.github.salamonpavel.zio.util.Constants.SCHEMA
 import slick.jdbc.{GetResult, PositionedResult, SQLActionBuilder}
 import za.co.absa.fadb.DBFunction._
 import za.co.absa.fadb.DBSchema
@@ -27,7 +27,7 @@ trait ActorsSchema {
 /**
  *  An implementation of the ActorsSchema trait.
  */
-class ActorsSchemaImpl(implicit dbEngine: SlickPgEngine) extends DBSchema(Some(schema)) with ActorsSchema {
+class ActorsSchemaImpl(implicit dbEngine: SlickPgEngine) extends DBSchema(Some(SCHEMA)) with ActorsSchema {
   import ActorsSchemaImpl._
 
   val getActorById = new GetActorById()

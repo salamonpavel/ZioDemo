@@ -48,7 +48,7 @@ class ActorsControllerImpl(queryParamsParser: QueryParamsParser, actorsService: 
    */
   override def findById(queryParams: QueryParams): ZIO[Any, Throwable, Option[Actor]] = {
     for {
-      id <- queryParamsParser.parseRequiredStringIntoInt(queryParams, Constants.id)
+      id <- queryParamsParser.parseRequiredInt(queryParams, Constants.ID)
       actor <- actorsService.findActorById(id)
     } yield actor
   }

@@ -2,7 +2,7 @@ package com.github.salamonpavel.zio.database
 
 import com.github.salamonpavel.zio.database.MoviesSchemaImpl.GetMovieById
 import com.github.salamonpavel.zio.model.Movie
-import com.github.salamonpavel.zio.util.Constants.schema
+import com.github.salamonpavel.zio.util.Constants.SCHEMA
 import slick.jdbc.{GetResult, PositionedResult, SQLActionBuilder}
 import za.co.absa.fadb.DBFunction._
 import za.co.absa.fadb.DBSchema
@@ -27,7 +27,7 @@ trait MoviesSchema {
 /**
  *  An implementation of the MoviesSchema trait.
  */
-class MoviesSchemaImpl(implicit dbEngine: SlickPgEngine) extends DBSchema(Some(schema)) with MoviesSchema {
+class MoviesSchemaImpl(implicit dbEngine: SlickPgEngine) extends DBSchema(Some(SCHEMA)) with MoviesSchema {
   import MoviesSchemaImpl._
 
   val getMovieById = new GetMovieById()

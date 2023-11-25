@@ -2,7 +2,8 @@ package com.github.salamonpavel.zio
 
 import com.github.salamonpavel.zio.controller.{ActorsControllerImpl, MoviesControllerImpl}
 import com.github.salamonpavel.zio.database.{ActorsSchemaImpl, MoviesSchemaImpl, PostgresDatabaseProvider}
-import com.github.salamonpavel.zio.service.{ActorsRepositoryImpl, ActorsServiceImpl, MoviesRepositoryImpl, MoviesServiceImpl}
+import com.github.salamonpavel.zio.repository.{ActorsRepositoryImpl, MoviesRepositoryImpl}
+import com.github.salamonpavel.zio.service.{ActorsServiceImpl, MoviesServiceImpl}
 import com.github.salamonpavel.zio.util.QueryParamsParserImpl
 import zio.http.Server
 import zio.{Scope, ZIO, ZIOAppArgs, ZIOAppDefault}

@@ -2,6 +2,7 @@ package com.github.salamonpavel.zio.service
 
 import com.github.salamonpavel.zio.exception.DatabaseError
 import com.github.salamonpavel.zio.model.Actor
+import com.github.salamonpavel.zio.repository.ActorsRepository
 import zio.{ZIO, ZLayer}
 
 /**

@@ -1,6 +1,6 @@
 package com.github.salamonpavel.zio.util
 
-private [zio] object Constants {
-  final val id = "id"
-  final val schema = "runs"
+private[zio] object Constants {
+  final val ID = "id"
+  final val SCHEMA = "runs"
 }

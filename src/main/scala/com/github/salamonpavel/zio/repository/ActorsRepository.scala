@@ -1,4 +1,4 @@
-package com.github.salamonpavel.zio.service
+package com.github.salamonpavel.zio.repository
 
 import com.github.salamonpavel.zio.database.ActorsSchema
 import com.github.salamonpavel.zio.exception.DatabaseError
