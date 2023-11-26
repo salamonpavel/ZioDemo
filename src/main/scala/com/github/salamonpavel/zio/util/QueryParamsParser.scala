@@ -32,7 +32,7 @@ object QueryParamsParser {
    *  @return A ZIO effect that requires a QueryParamsParser and produces an integer.
    *         The effect may fail with an AppError if the parameter is missing or not a valid integer.
    */
-  def parseRequiredStringIntoInt(
+  def parseRequiredInt(
     queryParams: QueryParams,
     param: String
   ): ZIO[QueryParamsParser, AppError, Int] = {
