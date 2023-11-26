@@ -5,14 +5,23 @@ import com.github.salamonpavel.zio.database.{ActorsSchemaImpl, MoviesSchemaImpl,
 import com.github.salamonpavel.zio.repository.{ActorsRepositoryImpl, MoviesRepositoryImpl}
 import com.github.salamonpavel.zio.service.{ActorsServiceImpl, MoviesServiceImpl}
 import com.github.salamonpavel.zio.util.QueryParamsParserImpl
+import zio.{Config, ConfigProvider, LogLevel, Runtime, Scope, ULayer, ZIO, ZIOAppArgs, ZIOAppDefault, ZLayer}
 import zio.http.Server
-import zio.{Scope, ZIO, ZIOAppArgs, ZIOAppDefault}
+import zio.logging.{ConsoleLoggerConfig, LogFilter, LogFormat, consoleLogger}
+import zio.config.typesafe.TypesafeConfigProvider
+
+import java.io.File
 
 /**
  *  The main object of the application.
  */
 object Main extends ZIOAppDefault {
-
+  
+  /**
+   *  The configuration provider of the application.
+   */
+  private val configProvider: ConfigProvider = TypesafeConfigProvider.fromResourcePath()
+  
   /**
    *  The main method of the application.
    *
@@ -34,4 +43,11 @@ object Main extends ZIOAppDefault {
         MoviesSchemaImpl.live,
         PostgresDatabaseProvider.live
       )
+
+  
+  /**
+   *  The bootstrap layer of the application.
+   */
+  override val bootstrap: ZLayer[Any, Config.Error, Unit] =
+    Runtime.removeDefaultLoggers >>> Runtime.setConfigProvider(configProvider) >>> consoleLogger()
 }

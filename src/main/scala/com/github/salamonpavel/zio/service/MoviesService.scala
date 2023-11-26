@@ -48,7 +48,10 @@ class MoviesServiceImpl(moviesRepository: MoviesRepository) extends MoviesServic
    *  @return A ZIO effect that produces an Option of Movie. The effect may fail with a DatabaseError.
    */
   override def findMovieById(id: Int): ZIO[Any, DatabaseError, Option[Movie]] = {
-    moviesRepository.getMovieById(id)
+    for {
+      _ <- ZIO.logDebug("Trying to find a movie by ID.")
+      movie <- moviesRepository.getMovieById(id)
+    } yield movie
   }
 }
 

@@ -47,7 +47,10 @@ class ActorsServiceImpl(actorsRepository: ActorsRepository) extends ActorsServic
    *  @return A ZIO effect that produces an Option of Actor. The effect may fail with a DatabaseError.
    */
   override def findActorById(id: Int): ZIO[Any, DatabaseError, Option[Actor]] = {
-    actorsRepository.getActorById(id)
+    for {
+      _ <- ZIO.logDebug("Trying to find an actor by ID.")
+      actor <- actorsRepository.getActorById(id)
+    } yield actor
   }
 }
 

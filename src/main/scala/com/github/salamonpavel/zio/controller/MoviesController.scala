@@ -50,6 +50,7 @@ class MoviesControllerImpl(queryParamsParser: QueryParamsParser, moviesService: 
   override def findById(queryParams: QueryParams): ZIO[Any, AppError, Option[Movie]] = {
     for {
       id <- queryParamsParser.parseRequiredInt(queryParams, Constants.ID)
+      _ <- ZIO.logDebug("Trying to find a movie by ID.")
       movie <- moviesService.findMovieById(id)
     } yield movie
   }

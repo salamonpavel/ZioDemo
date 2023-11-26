@@ -61,9 +61,11 @@ class QueryParamsParserImpl extends QueryParamsParser {
       paramStr <- ZIO
         .fromOption(queryParams.get(param))
         .mapError(_ => ParameterMissingError(s"Missing parameter: $param"))
+        .tapError(error => ZIO.logError(s"Failed to parse required integer parameter: ${error.message}"))
       paramInt <- ZIO
         .fromTry(Try(paramStr.asString.toInt))
         .mapError(_ => ParameterFormatError(s"Invalid integer parameter: $paramStr"))
+        .tapError(error => ZIO.logError(s"Failed to parse required integer parameter: ${error.message}"))
     } yield paramInt
   }
 }

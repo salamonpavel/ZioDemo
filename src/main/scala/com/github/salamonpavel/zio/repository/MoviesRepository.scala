@@ -50,7 +50,12 @@ class MoviesRepositoryImpl(schema: MoviesSchema) extends MoviesRepository {
   override def getMovieById(id: Int): ZIO[Any, DatabaseError, Option[Movie]] = {
     ZIO
       .fromFuture { implicit ec: ExecutionContext => schema.getMovieById(id) }
+      .tap {
+        case Some(movie) => ZIO.logInfo(s"Retrieved movie with ID $id: $movie")
+        case None => ZIO.logInfo(s"Movie with ID $id not found.")
+      }
       .mapError(error => DatabaseError(error.getMessage))
+      .tapError(error => ZIO.logError(s"Failed to retrieve movie with ID $id: ${error.message}"))
   }
 }
 
