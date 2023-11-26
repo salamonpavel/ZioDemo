@@ -10,7 +10,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
  *  A class representing a provider of a Postgres database.
  */
-class PostgresDatabaseProvider{
+class PostgresDatabaseProvider {
   val config: Config = ConfigFactory.load()
   val dbConfig: Config = config.getConfig("postgres")
   val db: Database = Database.forConfig("", dbConfig)

@@ -22,20 +22,6 @@ trait MoviesRepository {
   def getMovieById(id: Int): ZIO[Any, DatabaseError, Option[Movie]]
 }
 
-object MoviesRepository {
-
-  /**
-   *  Gets a movie by ID. This is an accessor method that requires a MoviesRepository.
-   *
-   *  @param id The ID of the movie.
-   *  @return A ZIO effect that requires a MoviesRepository and produces an Option of Movie.
-   *          The effect may fail with a DatabaseError.
-   */
-  def getMovieById(id: Int): ZIO[MoviesRepository, DatabaseError, Option[Movie]] = {
-    ZIO.serviceWithZIO[MoviesRepository](_.getMovieById(id))
-  }
-}
-
 /**
  *  An implementation of the MoviesRepository trait.
  */

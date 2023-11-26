@@ -11,6 +11,7 @@ import zio.json.{DeriveJsonDecoder, JsonDecoder}
 case class CreateActorRequestBody(firstName: String, lastName: String)
 
 object CreateActorRequestBody {
+
   /**
    *  An implicit JsonDecoder for the CreateActor case class.
    *  This decoder is used to convert JSON to instances of CreateActor.

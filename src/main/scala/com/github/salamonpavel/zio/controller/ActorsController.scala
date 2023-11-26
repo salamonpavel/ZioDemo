@@ -24,7 +24,8 @@ trait ActorsController {
    *  Creates an actor.
    *
    *  @param createActorRequestBody The request to create an actor.
-   *  @return A ZIO effect that produces an Actor. The effect may fail with an AppError.
+   *  @return A ZIO effect returning Unit as a result of Actor creation.
+   *          The effect may fail with an AppError if the actor cannot be created.
    */
   def create(createActorRequestBody: CreateActorRequestBody): ZIO[Any, AppError, Unit]
 }
@@ -45,12 +46,12 @@ object ActorsController {
   /**
    *  Creates an actor. This is an accessor method that requires an ActorsController.
    *
-   *  @param createActor The request to create an actor.
-   *  @return A ZIO effect that requires an ActorsController and produces an Actor.
-   *          The effect may fail with an AppError.
+   *  @param createActorRequestBody The request to create an actor.
+   *  @return A ZIO effect that requires an ActorsController and produces a Unit.
+   *          The effect may fail with an AppError if the actor cannot be created.
    */
-  def create(createActor: CreateActorRequestBody): ZIO[ActorsController, AppError, Unit] = {
-    ZIO.serviceWithZIO[ActorsController](_.create(createActor))
+  def create(createActorRequestBody: CreateActorRequestBody): ZIO[ActorsController, AppError, Unit] = {
+    ZIO.serviceWithZIO[ActorsController](_.create(createActorRequestBody))
   }
 }
 
@@ -78,7 +79,8 @@ class ActorsControllerImpl(queryParamsParser: QueryParamsParser, actorsService: 
    *  Creates an actor.
    *
    *  @param createActorRequestBody The request to create an actor.
-   *  @return A ZIO effect that produces an Actor. The effect may fail with an AppError.
+   *  @return A ZIO effect returning Unit as a result of Actor creation.
+   *          The effect may fail with an AppError if the actor cannot be created.
    */
   override def create(createActorRequestBody: CreateActorRequestBody): ZIO[Any, AppError, Unit] = {
     for {
