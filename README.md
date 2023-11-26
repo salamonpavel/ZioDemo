@@ -4,11 +4,11 @@ This application is a simple REST API built with ZIO, a type-safe, composable li
 
 ## Features
 
-- **Actor and Movie Management**: The application allows you to manage actors and movies. You can retrieve an actor or a movie by their ID.
+This application provides the following features:
 
-- **HTTP Routes**: The application provides HTTP routes for actor-related and movie-related requests. It supports GET requests to the "/actors" and "/movies" endpoints.
-
-- **Error Handling**: The application handles errors gracefully. If an error occurs, it returns a 400 Bad Request status with the error message.
+- **Retrieve an actor by ID**: You can retrieve an actor by their ID using the `GET /actors/{id}` endpoint. This feature uses the `runs.get_actor_by_id` database function.
+- **Retrieve a movie by ID**: You can retrieve a movie by their ID using the `GET /movies/{id}` endpoint. This feature uses the `runs.get_movie_by_id` database function.
+- **Create a new actor**: You can create a new actor using the `POST /actors` endpoint. This feature uses the `runs.create_actor` database function.
 
 ## Getting Started
 
@@ -26,29 +26,27 @@ The application provides two main endpoints: `/actors` and `/movies`.
 
 ### Actors Endpoint
 
-To retrieve an actor, send a GET request to the `/actors` endpoint with the ID of the actor as a query parameter. 
+The actors endpoint provides the following routes:
 
-For example, to retrieve the actor with ID 1, you would send the following request:
+- `GET /actors/{id}`: Retrieves an actor by their ID. Returns a 404 status if no actor with the given ID is found.
 
-```bash
-curl "http://localhost:8080/actors?id=1"
-```
-
-GitHub Copilot: Sure, here's a detailed usage description for your application:
-
-## Usage
-
-The application provides two main endpoints: `/actors` and `/movies`. 
-
-### Actors Endpoint
-
-To retrieve an actor, send a GET request to the `/actors` endpoint with the ID of the actor as a query parameter. 
-
-For example, to retrieve the actor with ID 1, you would send the following request:
+To retrieve an actor with an ID of 1, you would send a GET request to `/actors/1` using curl:
 
 ```bash
-curl "http://localhost:8080/actors?id=1"
+curl "http://localhost:8080/actors/1"
 ```
+
+- `POST /actors`: Creates a new actor. The request body should be a JSON object with the following structure:
+
+```json
+{
+  "firstName": "string",
+  "lastName": "string"
+}
+```
+Returns a 201 status if the actor is successfully created. Returns a 400 status if the request body is invalid. Returns a 500 status if an error occurs during the actor creation process.
+
+This update includes the addition of the `POST /actors` route to the actors endpoint documentation. The request body structure and the possible response statuses are also documented.
 
 The application will return a JSON response with the actor's details, or a 404 Not Found status if the actor does not exist.
 
@@ -122,42 +120,12 @@ VALUES
 
 ## Database Functions
 
-This application uses two PostgreSQL functions: `runs.get_actor_by_id` and `runs.get_movie_by_id`. These functions are used to retrieve an actor or a movie by their ID.
+This application uses three plpgsql functions: `runs.get_actor_by_id`, `runs.get_movie_by_id`, and `runs.create_actor`. These functions are used to retrieve an actor or a movie by their ID, and to create a new actor, respectively.
 
 Here's how you can create these functions:
 
-```sql
--- Function to get an actor by ID
-CREATE OR REPLACE FUNCTION runs.get_actor_by_id(
-    i_actor_id              INTEGER
-) RETURNS TABLE (
-    actor_id                INTEGER,
-    first_name              VARCHAR(150),
-    last_name               VARCHAR(150)
-) AS
-$$
-BEGIN
-    RETURN QUERY SELECT A.actor_id, A.first_name, A.last_name
-    FROM runs.actors A
-    WHERE A.actor_id = i_actor_id;
-END;
-$$
-LANGUAGE plpgsql;
+You can find the definitions of these functions in the following files:
 
--- Function to get a movie by ID
-CREATE OR REPLACE FUNCTION runs.get_movie_by_id(
-    i_movie_id              INTEGER
-) RETURNS TABLE (
-    movie_id                INTEGER,
-    movie_name              VARCHAR(100),
-    movie_length            INTEGER
-) AS
-$$
-BEGIN
-    RETURN QUERY SELECT M.movie_id, M.movie_name, M.movie_length
-    FROM runs.movies M
-    WHERE M.movie_id = i_movie_id;
-END;
-$$
-LANGUAGE plpgsql;
-```
+- [runs.get_actor_by_id](database/src/main/runs/get_actor_by_id.sql)
+- [runs.get_movie_by_id](database/src/main/runs/get_movie_by_id.sql)
+- [runs.create_actor](database/src/main/runs/create_actor.sql)

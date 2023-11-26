@@ -85,7 +85,8 @@ class ActorsControllerImpl(queryParamsParser: QueryParamsParser, actorsService: 
   override def create(createActorRequestBody: CreateActorRequestBody): ZIO[Any, AppError, Unit] = {
     for {
       _ <- ZIO.logDebug(
-        s"Trying to create an actor with first name ${createActorRequestBody.firstName} and last name ${createActorRequestBody.lastName}."
+        s"Trying to create an actor with first name ${createActorRequestBody.firstName} " +
+          s"and last name ${createActorRequestBody.lastName}."
       )
       _ <- actorsService.createActor(createActorRequestBody)
     } yield ()
