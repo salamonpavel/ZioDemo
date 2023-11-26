@@ -1,14 +1,15 @@
 package com.github.salamonpavel.zio.database
 
-import com.github.salamonpavel.zio.database.ActorsSchemaImpl.GetActorById
-import com.github.salamonpavel.zio.model.Actor
+import com.github.salamonpavel.zio.database.ActorsSchemaImpl.{CreateActor, GetActorById}
+import com.github.salamonpavel.zio.model.{Actor, CreateActorRequestBody}
 import com.github.salamonpavel.zio.util.Constants.SCHEMA
 import slick.jdbc.{GetResult, PositionedResult, SQLActionBuilder}
 import za.co.absa.fadb.DBFunction._
 import za.co.absa.fadb.DBSchema
 import za.co.absa.fadb.naming.implementations.SnakeCaseNaming.Implicits._
 import za.co.absa.fadb.slick.FaDbPostgresProfile.api._
-import za.co.absa.fadb.slick.{SlickFunction, SlickPgEngine}
+import za.co.absa.fadb.slick.{SlickFunction, SlickFunctionWithStatusSupport, SlickPgEngine}
+import za.co.absa.fadb.status.handling.implementations.StandardStatusHandling
 import zio.{ZIO, ZLayer}
 
 /**
@@ -22,6 +23,13 @@ trait ActorsSchema {
    *  @return An instance of GetActorById.
    */
   def getActorById: GetActorById
+
+  /**
+   *  Creates an actor.
+   *
+   *  @return An instance of CreateActor.
+   */
+  def createActor: CreateActor
 }
 
 /**
@@ -31,6 +39,7 @@ class ActorsSchemaImpl(implicit dbEngine: SlickPgEngine) extends DBSchema(Some(S
   import ActorsSchemaImpl._
 
   val getActorById = new GetActorById()
+  val createActor = new CreateActor()
 }
 
 object ActorsSchemaImpl {
@@ -54,6 +63,22 @@ object ActorsSchemaImpl {
       }
       GetResult(converter)
     }
+  }
+
+  class CreateActor(implicit override val schema: DBSchema, val dbEngine: SlickPgEngine)
+      extends DBSingleResultFunction[CreateActorRequestBody, Unit, SlickPgEngine]
+      with SlickFunctionWithStatusSupport[CreateActorRequestBody, Unit]
+      with StandardStatusHandling {
+
+    override protected def sql(createActorRequestBody: CreateActorRequestBody): SQLActionBuilder = {
+      sql"""SELECT #$selectEntry
+            FROM #$functionName(
+              ${createActorRequestBody.firstName},
+              ${createActorRequestBody.lastName}
+            ) #$alias;"""
+    }
+
+    override protected def slickConverter: GetResult[Unit] = GetResult { _ => }
   }
 
   /**

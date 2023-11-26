@@ -2,7 +2,7 @@ package com.github.salamonpavel.zio.repository
 
 import com.github.salamonpavel.zio.database.ActorsSchema
 import com.github.salamonpavel.zio.exception.DatabaseError
-import com.github.salamonpavel.zio.model.Actor
+import com.github.salamonpavel.zio.model.{Actor, CreateActorRequestBody}
 import zio.{ZIO, ZLayer}
 
 import scala.concurrent.ExecutionContext
@@ -20,20 +20,15 @@ trait ActorsRepository {
    *          The effect may fail with a DatabaseError.
    */
   def getActorById(id: Int): ZIO[Any, DatabaseError, Option[Actor]]
-}
-
-object ActorsRepository {
 
   /**
-   *  Gets an actor by ID. This is an accessor method that requires an ActorsRepository.
+   *  Creates an actor. This is an accessor method that requires an ActorsRepository.
    *
-   *  @param id The ID of the actor.
-   *  @return A ZIO effect that requires an ActorsRepository and produces an Option of Actor.
+   *  @param createActorRequestBody The request to create an actor.
+   *  @return A ZIO effect that requires an ActorsRepository and produces an Actor.
    *          The effect may fail with a DatabaseError.
    */
-  def getActorById(id: Int): ZIO[ActorsRepository, DatabaseError, Option[Actor]] = {
-    ZIO.serviceWithZIO[ActorsRepository](_.getActorById(id))
-  }
+  def createActor(createActorRequestBody: CreateActorRequestBody): ZIO[Any, DatabaseError, Unit]
 }
 
 /**
@@ -56,6 +51,25 @@ class ActorsRepositoryImpl(schema: ActorsSchema) extends ActorsRepository {
       }
       .mapError(error => DatabaseError(error.getMessage))
       .tapError(error => ZIO.logError(s"Failed to retrieve actor with ID $id: ${error.message}"))
+  }
+
+  /**
+   *  Creates an actor.
+   *
+   *  @param createActorRequestBody The request to create an actor.
+   *  @return A ZIO effect that produces an Actor. The effect may fail with a DatabaseError.
+   */
+  override def createActor(createActorRequestBody: CreateActorRequestBody): ZIO[Any, DatabaseError, Unit] = {
+    ZIO
+      .fromFuture { implicit ec: ExecutionContext => schema.createActor(createActorRequestBody) }
+      .tap(_ =>
+        ZIO.logInfo(
+          s"Created actor with first name: ${createActorRequestBody.firstName} " +
+            s"and last name: ${createActorRequestBody.lastName}."
+        )
+      )
+      .mapError(error => DatabaseError(error.getMessage))
+      .tapError(error => ZIO.logError(s"Failed to create actor: ${error.message}"))
   }
 }
 

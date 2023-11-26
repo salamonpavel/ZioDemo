@@ -1,11 +1,12 @@
 package com.github.salamonpavel.zio
 
 import com.github.salamonpavel.zio.controller.{ActorsController, MoviesController}
-import com.github.salamonpavel.zio.model.{Actor, Movie}
+import com.github.salamonpavel.zio.exception.RequestBodyError
+import com.github.salamonpavel.zio.model.{Actor, CreateActorRequestBody, Movie}
 import zio._
 import zio.http._
 import zio.http.model.{Method, Status}
-import zio.json.{EncoderOps, JsonEncoder}
+import zio.json.{DecoderOps, EncoderOps, JsonEncoder}
 
 /**
  *  An object containing the HTTP routes for the application.
@@ -21,6 +22,21 @@ object Routes {
         .findById(req.url.queryParams)
         .map(responseFromOption[Actor])
         .catchAll(handleError)
+
+    case req @ Method.POST -> !! / "actors" =>
+      req.body.asString
+        .flatMap(requestBody =>
+          ZIO
+            .fromEither(requestBody.fromJson[CreateActorRequestBody])
+            .mapError(_ => RequestBodyError("Invalid request body"))
+            .tapError(error => ZIO.logError(s"Failed to parse request body: ${error.message}"))
+            .flatMap(createActorRequestBody =>
+              ActorsController
+                .create(createActorRequestBody)
+                .map(_ => Response.status(Status.Created))
+            )
+        )
+        .catchAll(_ => ZIO.succeed(Response.status(Status.InternalServerError)))
   }
 
   /**

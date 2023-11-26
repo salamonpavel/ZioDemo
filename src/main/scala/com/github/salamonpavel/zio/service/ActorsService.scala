@@ -1,7 +1,7 @@
 package com.github.salamonpavel.zio.service
 
 import com.github.salamonpavel.zio.exception.DatabaseError
-import com.github.salamonpavel.zio.model.Actor
+import com.github.salamonpavel.zio.model.{Actor, CreateActorRequestBody}
 import com.github.salamonpavel.zio.repository.ActorsRepository
 import zio.{ZIO, ZLayer}
 
@@ -17,20 +17,14 @@ trait ActorsService {
    *  @return A ZIO effect that produces an Option of Actor. The effect may fail with a DatabaseError.
    */
   def findActorById(id: Int): ZIO[Any, DatabaseError, Option[Actor]]
-}
-
-object ActorsService {
 
   /**
-   *  Finds an actor by ID. This is an accessor method that requires an ActorsService.
+   *  Creates an actor.
    *
-   *  @param id The ID of the actor.
-   *  @return A ZIO effect that requires an ActorsService and produces an Option of Actor.
-   *         The effect may fail with a DatabaseError.
+   *  @param createActorRequestBody The request to create an actor.
+   *  @return A ZIO effect that produces an Actor. The effect may fail with a DatabaseError.
    */
-  def findActorById(id: Int): ZIO[ActorsService, DatabaseError, Option[Actor]] = {
-    ZIO.serviceWithZIO[ActorsService](_.findActorById(id))
-  }
+  def createActor(createActorRequestBody: CreateActorRequestBody): ZIO[Any, DatabaseError, Unit]
 }
 
 /**
@@ -50,6 +44,21 @@ class ActorsServiceImpl(actorsRepository: ActorsRepository) extends ActorsServic
     for {
       _ <- ZIO.logDebug("Trying to find an actor by ID.")
       actor <- actorsRepository.getActorById(id)
+    } yield actor
+  }
+
+  /**
+   *  Creates an actor.
+   *
+   *  @param createActorRequestBody The request to create an actor.
+   *  @return A ZIO effect that produces an Actor. The effect may fail with a DatabaseError.
+   */
+  override def createActor(createActorRequestBody: CreateActorRequestBody): ZIO[Any, DatabaseError, Unit] = {
+    for {
+      _ <- ZIO.logDebug(
+        s"Trying to create an actor with first name ${createActorRequestBody.firstName} and last name ${createActorRequestBody.lastName}."
+      )
+      actor <- actorsRepository.createActor(createActorRequestBody)
     } yield actor
   }
 }

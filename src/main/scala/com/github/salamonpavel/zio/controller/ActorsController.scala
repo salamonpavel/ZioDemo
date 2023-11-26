@@ -1,7 +1,7 @@
 package com.github.salamonpavel.zio.controller
 
 import com.github.salamonpavel.zio.exception.AppError
-import com.github.salamonpavel.zio.model.Actor
+import com.github.salamonpavel.zio.model.{Actor, CreateActorRequestBody}
 import com.github.salamonpavel.zio.service.ActorsService
 import com.github.salamonpavel.zio.util.{Constants, QueryParamsParser}
 import zio.http.QueryParams
@@ -19,6 +19,14 @@ trait ActorsController {
    *  @return A ZIO effect that produces an Option of Actor. The effect may fail with an AppError.
    */
   def findById(queryParams: QueryParams): ZIO[Any, AppError, Option[Actor]]
+
+  /**
+   *  Creates an actor.
+   *
+   *  @param createActorRequestBody The request to create an actor.
+   *  @return A ZIO effect that produces an Actor. The effect may fail with an AppError.
+   */
+  def create(createActorRequestBody: CreateActorRequestBody): ZIO[Any, AppError, Unit]
 }
 
 object ActorsController {
@@ -32,6 +40,17 @@ object ActorsController {
    */
   def findById(queryParams: QueryParams): ZIO[ActorsController, AppError, Option[Actor]] = {
     ZIO.serviceWithZIO[ActorsController](_.findById(queryParams))
+  }
+
+  /**
+   *  Creates an actor. This is an accessor method that requires an ActorsController.
+   *
+   *  @param createActor The request to create an actor.
+   *  @return A ZIO effect that requires an ActorsController and produces an Actor.
+   *          The effect may fail with an AppError.
+   */
+  def create(createActor: CreateActorRequestBody): ZIO[ActorsController, AppError, Unit] = {
+    ZIO.serviceWithZIO[ActorsController](_.create(createActor))
   }
 }
 
@@ -53,6 +72,21 @@ class ActorsControllerImpl(queryParamsParser: QueryParamsParser, actorsService: 
       _ <- ZIO.logDebug("Trying to find an actor by ID.")
       actor <- actorsService.findActorById(id)
     } yield actor
+  }
+
+  /**
+   *  Creates an actor.
+   *
+   *  @param createActorRequestBody The request to create an actor.
+   *  @return A ZIO effect that produces an Actor. The effect may fail with an AppError.
+   */
+  override def create(createActorRequestBody: CreateActorRequestBody): ZIO[Any, AppError, Unit] = {
+    for {
+      _ <- ZIO.logDebug(
+        s"Trying to create an actor with first name ${createActorRequestBody.firstName} and last name ${createActorRequestBody.lastName}."
+      )
+      _ <- actorsService.createActor(createActorRequestBody)
+    } yield ()
   }
 }
 

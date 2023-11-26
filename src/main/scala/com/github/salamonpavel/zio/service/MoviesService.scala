@@ -20,20 +20,6 @@ trait MoviesService {
   def findMovieById(id: Int): ZIO[Any, DatabaseError, Option[Movie]]
 }
 
-object MoviesService {
-
-  /**
-   *  Gets a movie by ID. This is an accessor method that requires a MoviesService.
-   *
-   *  @param id The ID of the movie.
-   *  @return A ZIO effect that requires a MoviesService and produces an Option of Movie.
-   *          The effect may fail with a DatabaseError.
-   */
-  def findMovieById(id: Int): ZIO[MoviesService, DatabaseError, Option[Movie]] = {
-    ZIO.serviceWithZIO[MoviesService](_.findMovieById(id))
-  }
-}
-
 /**
  *  An implementation of the MoviesService trait.
  *
