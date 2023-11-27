@@ -29,6 +29,6 @@ libraryDependencies ++= Seq(
   "com.github.tminglei" %% "slick-pg" % "0.20.4", // has to be version 0.20.4
   // scalatest
   "org.scalatest" %% "scalatest" % "3.2.15" % Test,
-  // balta
+  // balta https://github.com/AbsaOSS/balta
   "za.co.absa.balta" %% "balta" % "0.1.0-SNAPSHOT" % Test
 )
