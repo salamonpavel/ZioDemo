@@ -65,12 +65,6 @@ _countryMT
 _currencyMT
 _productMT
 _nestedStructs
-myTestCheckpoints
-
-src/main/resources/config.conf
-**/main/resources/application.conf
-**/main/resources/application.yaml
-**/main/resources/application.yml
 
 *.config
 *.keytab
