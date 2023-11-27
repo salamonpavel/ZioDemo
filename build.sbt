@@ -7,6 +7,10 @@ lazy val root = (project in file("."))
     name := "ZioDemo"
   )
 
+// to be able to fetch balta from local maven repo
+// you can publish balta to local maven repo by running `sbt publishM2`
+resolvers += Resolver.mavenLocal
+
 libraryDependencies ++= Seq(
   // zio
   "dev.zio" %% "zio" % "2.0.19",
@@ -23,5 +27,8 @@ libraryDependencies ++= Seq(
   "za.co.absa.fa-db" %% "core" % "0.2.0",
   "za.co.absa.fa-db" %% "slick" % "0.2.0",
   "com.github.tminglei" %% "slick-pg" % "0.20.4", // has to be version 0.20.4
-  "org.scalatest" %% "scalatest" % "3.2.15" % Test
+  // scalatest
+  "org.scalatest" %% "scalatest" % "3.2.15" % Test,
+  // balta
+  "za.co.absa.balta" %% "balta" % "0.1.0-SNAPSHOT" % Test
 )
