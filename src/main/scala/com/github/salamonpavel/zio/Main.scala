@@ -44,6 +44,7 @@ object Main extends ZIOAppDefault {
 
   /**
    *  The bootstrap layer of the application.
+   *  Logger settings are configured in the application.conf file.
    */
   override val bootstrap: ZLayer[Any, Config.Error, Unit] =
     Runtime.removeDefaultLoggers >>> Runtime.setConfigProvider(configProvider) >>> consoleLogger()
