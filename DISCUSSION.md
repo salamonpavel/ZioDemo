@@ -1,19 +1,59 @@
-### Notes for the discussion
+### What are effects and why do we need them?
+In the context of functional programming, an effect refers to an operation that does something other than simply compute a result. This could be reading from or writing to a database, making a network request, reading from or writing to the console, or any other kind of interaction with the outside world. 
 
-### Core ZIO Data Types
+In pure functional programming, functions should not have side effects. They should only compute and return a value based on their input. However, most useful programs need to interact with the outside world in some way. To reconcile this, functional programming languages often model effects as values that can be computed, rather than operations that are performed. 
 
-    ZIO — ZIO is a value that models an effectful program, which might fail or succeed.
-        UIO — UIO[A] is a type alias for ZIO[Any, Nothing, A].
-        URIO — URIO[R, A] is a type alias for ZIO[R, Nothing, A].
-        Task — Task[A] is a type alias for ZIO[Any, Throwable, A].
-        RIO — RIO[R, A] is a type alias for ZIO[R, Throwable, A].
-        IO — IO[E, A] is a type alias for ZIO[Any, E, A].
-    ZIOApp — ZIOApp and the ZIOAppDefault are entry points for ZIO applications.
-    Runtime — Runtime[R] is capable of executing tasks within an environment R.
-    Exit — Exit[E, A] describes the result of executing an IO value.
-    Cause — Cause[E] is a description of a full story of a fiber failure.
+### Futures, Cats Effect IO, ZIO
+Scala `Future`, Cats `IO`, and ZIO `ZIO` are all used to represent computations that may have side effects, but they have different features and design philosophies.
+
+**Scala Future:**
+
+- Futures in Scala are eager, meaning they start executing as soon as they are defined. This can make them harder to reason about because side effects can occur at unexpected times. Given that the execution of a Future is not separate to its creation, Future is not a real effect.  
+- Futures are not referentially transparent, which is a key property in functional programming.
+- Error handling with Futures can be tricky because a failed Future might throw an exception immediately upon creation.
+- Futures lack some powerful combinators for dealing with concurrency and resource management.
+
+**Cats IO:**
+
+- Cats `IO` is a data type for encoding side effects as pure values, addressing some of the issues with `Future`.
+- `IO` is lazy, meaning computations are not executed until the "end of the world", i.e., the main function or the point where the side effect needs to be executed.
+- `IO` has a rich set of combinators for transforming and composing instances.
+- `IO` provides better support for error handling than `Future`.
+- `IO` Cats Effects library has support for cancellation and concurrent programming. 
+
+**ZIO:**
+
+- `ZIO` data type includes an error type parameter, which allows for type-safe error handling. This can help prevent runtime errors and make your code more robust.
+- `ZIO` includes an environment type parameter, which can be used to provide dependencies to your effects. This can make your code more modular and testable.
+- `ZIO` has first-class support for concurrency and parallelism, with a number of powerful combinators for managing concurrent and parallel computations.
+
+In summary, while `Future` is built into Scala, it has several limitations. Both Cats `IO` and ZIO provide more powerful and flexible ways to deal with effects. `ZIO` is more robust and provides type-safe error handling and environment type parameter which can be used to provide dependencies.
+
+
+## Core ZIO Data Types
+
+ZIO provides several core data types to represent different kinds of effects:
+
+1. **ZIO[R, E, A]**: This is the main data type in ZIO. It represents an effectful program that requires an environment of type `R`, may fail with an error of type `E`, or may succeed with a value of type `A`.
+
+2. **UIO[A]**: This is a type alias for `ZIO[Any, Nothing, A]`. It represents an effect that cannot fail and does not require any environment.
+
+3. **URIO[R, A]**: This is a type alias for `ZIO[R, Nothing, A]`. It represents an effect that cannot fail and requires an environment of type `R`.
+
+4. **Task[A]**: This is a type alias for `ZIO[Any, Throwable, A]`. It represents an effect that may fail with a `Throwable` and does not require any environment.
+
+5. **RIO[R, A]**: This is a type alias for `ZIO[R, Throwable, A]`. It represents an effect that may fail with a `Throwable` and requires an environment of type `R`.
+
+6. **IO[E, A]**: This is a type alias for `ZIO[Any, E, A]`. It represents an effect that may fail with an error of type `E` and does not require any environment.
+
+7. **ZIOApp**: This is an entry point for ZIO applications. It provides a default runtime and requires you to implement a `run` method that produces a `ZIO` effect.
+
+8. **Runtime[R]**: This is capable of executing tasks within an environment `R`.
+
+9. **Exit[E, A]**: This describes the result of executing an IO value. It can be either a success (`Exit.Success`) with a value of type `A`, or a failure (`Exit.Failure`) with a cause of type `E`.
 
 ### Elements of Service pattern
+
 1. Service definition with scala trait
 2. Classes for service implementation; dependencies passed via constructors (interfaces, not implementation)
 3. ZLayer constructors
