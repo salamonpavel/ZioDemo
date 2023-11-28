@@ -31,37 +31,6 @@ trait HttpRequestParser {
   def parseRequestBody[A](request: Request)(implicit decoder: JsonDecoder[A]): IO[RequestBodyError, A]
 }
 
-object HttpRequestParser {
-
-  /**
-   *  Parses a required string parameter into an integer. This is an accessor method that requires a HttpRequestParser.
-   *
-   *  @param queryParams The query parameters to parse.
-   *  @param param The name of the parameter to parse.
-   *  @return A ZIO effect that requires a QueryParamsParser and produces an integer.
-   *         The effect may fail with an AppError if the parameter is missing or not a valid integer.
-   */
-  def parseRequiredInt(
-    queryParams: QueryParams,
-    param: String
-  ): ZIO[HttpRequestParser, AppError, Int] = {
-    ZIO.serviceWithZIO[HttpRequestParser](_.parseRequiredInt(queryParams, param))
-  }
-
-  /**
-   *  Parses the request body into an A. This is an accessor method that requires a HttpRequestParser.
-   *
-   *  @param request The request to parse.
-   *  @return A ZIO effect that requires a HttpRequestParser and produces an A.
-   *         The effect may fail with a RequestBodyError.
-   */
-  def parseRequestBody[A](
-    request: Request
-  )(implicit decoder: JsonDecoder[A]): ZIO[HttpRequestParser, RequestBodyError, A] = {
-    ZIO.serviceWithZIO[HttpRequestParser](_.parseRequestBody[A](request))
-  }
-}
-
 /**
  *  An implementation of the QueryParamsParser trait.
  */

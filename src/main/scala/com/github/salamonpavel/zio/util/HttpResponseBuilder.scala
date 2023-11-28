@@ -16,21 +16,6 @@ trait HttpResponseBuilder {
   def optionToResponse[T](option: Option[T])(implicit encoder: JsonEncoder[T]): Response
 }
 
-object HttpResponseBuilder {
-
-  /**
-   *  Converts an Option of T to a Response. This is an accessor method that requires a HttpResponseBuilder.
-   *
-   *  @param option The Option of T.
-   *  @return A Response.
-   */
-  def optionToResponse[T](
-    option: Option[T]
-  )(implicit encoder: JsonEncoder[T]): URIO[HttpResponseBuilder, Response] = {
-    ZIO.serviceWith[HttpResponseBuilder](_.optionToResponse(option))
-  }
-}
-
 class HttpResponseBuilderImpl extends HttpResponseBuilder {
 
   /**
