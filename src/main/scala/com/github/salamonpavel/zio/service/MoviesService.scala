@@ -35,7 +35,7 @@ class MoviesServiceImpl(moviesRepository: MoviesRepository) extends MoviesServic
    */
   override def findMovieById(id: Int): ZIO[Any, DatabaseError, Option[Movie]] = {
     for {
-      _ <- ZIO.logDebug("Trying to find a movie by ID.")
+      _     <- ZIO.logDebug("Trying to find a movie by ID.")
       movie <- moviesRepository.getMovieById(id)
     } yield movie
   }

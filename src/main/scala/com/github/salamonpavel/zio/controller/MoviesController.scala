@@ -49,8 +49,8 @@ class MoviesControllerImpl(queryParamsParser: QueryParamsParser, moviesService: 
    */
   override def findById(queryParams: QueryParams): ZIO[Any, AppError, Option[Movie]] = {
     for {
-      id <- queryParamsParser.parseRequiredInt(queryParams, Constants.ID)
-      _ <- ZIO.logDebug("Trying to find a movie by ID.")
+      id    <- queryParamsParser.parseRequiredInt(queryParams, Constants.ID)
+      _     <- ZIO.logDebug("Trying to find a movie by ID.")
       movie <- moviesService.findMovieById(id)
     } yield movie
   }
@@ -64,7 +64,7 @@ object MoviesControllerImpl {
   val live: ZLayer[QueryParamsParser with MoviesService, Nothing, MoviesController] = ZLayer {
     for {
       queryParamsParser <- ZIO.service[QueryParamsParser]
-      moviesService <- ZIO.service[MoviesService]
+      moviesService     <- ZIO.service[MoviesService]
     } yield new MoviesControllerImpl(queryParamsParser, moviesService)
   }
 }

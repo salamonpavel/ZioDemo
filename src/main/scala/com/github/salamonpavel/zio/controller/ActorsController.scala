@@ -69,8 +69,8 @@ class ActorsControllerImpl(queryParamsParser: QueryParamsParser, actorsService: 
    */
   override def findById(queryParams: QueryParams): ZIO[Any, AppError, Option[Actor]] = {
     for {
-      id <- queryParamsParser.parseRequiredInt(queryParams, Constants.ID)
-      _ <- ZIO.logDebug("Trying to find an actor by ID.")
+      id    <- queryParamsParser.parseRequiredInt(queryParams, Constants.ID)
+      _     <- ZIO.logDebug("Trying to find an actor by ID.")
       actor <- actorsService.findActorById(id)
     } yield actor
   }
@@ -102,7 +102,7 @@ object ActorsControllerImpl {
     ZLayer {
       for {
         queryParamsParser <- ZIO.service[QueryParamsParser]
-        actorsService <- ZIO.service[ActorsService]
+        actorsService     <- ZIO.service[ActorsService]
       } yield new ActorsControllerImpl(queryParamsParser, actorsService)
     }
 }

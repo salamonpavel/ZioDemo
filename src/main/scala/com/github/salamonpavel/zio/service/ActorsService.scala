@@ -42,7 +42,7 @@ class ActorsServiceImpl(actorsRepository: ActorsRepository) extends ActorsServic
    */
   override def findActorById(id: Int): ZIO[Any, DatabaseError, Option[Actor]] = {
     for {
-      _ <- ZIO.logDebug("Trying to find an actor by ID.")
+      _     <- ZIO.logDebug("Trying to find an actor by ID.")
       actor <- actorsRepository.getActorById(id)
     } yield actor
   }
