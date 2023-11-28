@@ -44,7 +44,7 @@ class ActorsRepositoryImpl(schema: ActorsSchema) extends ActorsRepository {
       .fromFuture { implicit ec: ExecutionContext => schema.getActorById(id) }
       .tap {
         case Some(actor) => ZIO.logInfo(s"Retrieved actor with ID $id: $actor")
-        case None => ZIO.logInfo(s"Actor with ID $id not found.")
+        case None        => ZIO.logInfo(s"Actor with ID $id not found.")
       }
       .mapError(error => DatabaseError(error.getMessage))
       .tapError(error => ZIO.logError(s"Failed to retrieve actor with ID $id: ${error.message}"))

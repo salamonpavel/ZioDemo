@@ -27,7 +27,7 @@ class HttpResponseBuilderImpl extends HttpResponseBuilder {
   def optionToResponse[T](option: Option[T])(implicit encoder: JsonEncoder[T]): Response = {
     option match {
       case Some(value) => Response.json(value.toJson)
-      case None => Response.status(Status.NotFound)
+      case None        => Response.status(Status.NotFound)
     }
   }
 }

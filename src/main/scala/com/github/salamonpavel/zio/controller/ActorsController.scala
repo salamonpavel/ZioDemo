@@ -59,7 +59,6 @@ class ActorsControllerImpl(
 
   /**
    *  Finds an actor by ID.
-   *
    */
   override def findActorById(request: Request): IO[AppError, Response] = {
     for {
@@ -71,7 +70,6 @@ class ActorsControllerImpl(
 
   /**
    *  Creates an actor.
-   *
    */
   override def createActor(request: Request): IO[AppError, Response] = {
     for {
