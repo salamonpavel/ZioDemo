@@ -38,9 +38,6 @@ class ActorsRepositoryImpl(schema: ActorsSchema) extends ActorsRepository {
 
   /**
    *  Gets an actor by ID.
-   *
-   *  @param id The ID of the actor.
-   *  @return A ZIO effect that produces an Option of Actor. The effect may fail with a DatabaseError.
    */
   override def getActorById(id: Int): IO[DatabaseError, Option[Actor]] = {
     ZIO
@@ -55,9 +52,6 @@ class ActorsRepositoryImpl(schema: ActorsSchema) extends ActorsRepository {
 
   /**
    *  Creates an actor.
-   *
-   *  @param createActorRequestBody The request to create an actor.
-   *  @return A ZIO effect that produces an Actor. The effect may fail with a DatabaseError.
    */
   override def createActor(createActorRequestBody: CreateActorRequestBody): IO[DatabaseError, Unit] = {
     ZIO

@@ -1,6 +1,6 @@
 package com.github.salamonpavel.zio.util
 
-import com.github.salamonpavel.zio.exception.{AppError, ParameterFormatError, ParameterMissingError, RequestBodyError}
+import com.github.salamonpavel.zio.exception._
 import zio._
 import zio.http.{QueryParams, Request}
 import zio.json.{DecoderOps, JsonDecoder}
@@ -38,11 +38,6 @@ class HttpRequestParserImpl extends HttpRequestParser {
 
   /**
    *  Parses a required string parameter into an integer.
-   *
-   *  @param queryParams The query parameters to parse.
-   *  @param param The name of the parameter to parse.
-   *  @return A ZIO effect that produces an integer.
-   *         The effect may fail with a ParameterMissingError or a ParameterFormatError.
    */
   override def parseRequiredInt(
     queryParams: QueryParams,
@@ -62,9 +57,6 @@ class HttpRequestParserImpl extends HttpRequestParser {
 
   /**
    *  Parses the request body into an A.
-   *
-   *  @param request The request to parse.
-   *  @return A ZIO effect that produces an A. The effect may fail with a RequestBodyError.
    */
   def parseRequestBody[A](request: Request)(implicit decoder: JsonDecoder[A]): IO[RequestBodyError, A] = {
     for {

@@ -24,10 +24,6 @@ object MoviesController {
 
   /**
    *  Finds a movie by ID. This is an accessor method that requires a MoviesController.
-   *
-   *  @param request The HTTP request to find a movie.
-   *  @return A ZIO effect that requires a MoviesController and produces an Option of Movie.
-   *          The effect may fail with an AppError.
    */
   def findMovieById(request: Request): ZIO[MoviesController, AppError, Response] = {
     ZIO.serviceWithZIO[MoviesController](_.findMovieById(request))
@@ -45,9 +41,6 @@ class MoviesControllerImpl(
 
   /**
    *  Finds a movie by ID.
-   *
-   *  @param request The HTTP request to find a movie.
-   *  @return A ZIO effect that produces an Option of Movie. The effect may fail with an AppError.
    */
   override def findMovieById(request: Request): IO[AppError, Response] = {
     for {

@@ -29,9 +29,6 @@ class MoviesRepositoryImpl(schema: MoviesSchema) extends MoviesRepository {
 
   /**
    *  Gets a movie by ID.
-   *
-   *  @param id The ID of the movie.
-   *  @return A ZIO effect that produces an Option of Movie. The effect may fail with a DatabaseError.
    */
   override def getMovieById(id: Int): IO[DatabaseError, Option[Movie]] = {
     ZIO

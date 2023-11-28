@@ -35,10 +35,6 @@ object ActorsController {
 
   /**
    *  Finds an actor by ID. This is an accessor method that requires an ActorsController.
-   *
-   *  @param request The HTTP request to find an actor.
-   *  @return A ZIO effect that requires an ActorsController and produces an Option of Actor.
-   *          The effect may fail with an AppError.
    */
   def findActorById(request: Request): ZIO[ActorsController, AppError, Response] = {
     ZIO.serviceWithZIO[ActorsController](_.findActorById(request))
@@ -46,10 +42,6 @@ object ActorsController {
 
   /**
    *  Creates an actor. This is an accessor method that requires an ActorsController.
-   *
-   *  @param request The request to create an actor.
-   *  @return A ZIO effect that requires an ActorsController and produces a Unit.
-   *          The effect may fail with an AppError if the actor cannot be created.
    */
   def createActor(request: Request): ZIO[ActorsController, AppError, Response] = {
     ZIO.serviceWithZIO[ActorsController](_.createActor(request))
@@ -68,8 +60,6 @@ class ActorsControllerImpl(
   /**
    *  Finds an actor by ID.
    *
-   *  @param request The HTTP request to find an actor.
-   *  @return A ZIO effect that produces an Option of Actor. The effect may fail with an AppError.
    */
   override def findActorById(request: Request): IO[AppError, Response] = {
     for {
@@ -82,9 +72,6 @@ class ActorsControllerImpl(
   /**
    *  Creates an actor.
    *
-   *  @param request The request to create an actor.
-   *  @return A ZIO effect returning Unit as a result of Actor creation.
-   *          The effect may fail with an AppError if the actor cannot be created.
    */
   override def createActor(request: Request): IO[AppError, Response] = {
     for {

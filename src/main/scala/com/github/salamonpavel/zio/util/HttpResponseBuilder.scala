@@ -16,13 +16,13 @@ trait HttpResponseBuilder {
   def optionToResponse[T](option: Option[T])(implicit encoder: JsonEncoder[T]): Response
 }
 
+/**
+ *  An implementation of the HttpResponseBuilder trait.
+ */
 class HttpResponseBuilderImpl extends HttpResponseBuilder {
 
   /**
    *  Converts an Option of T to a Response.
-   *
-   *  @param option The Option of T.
-   *  @return A Response.
    */
   def optionToResponse[T](option: Option[T])(implicit encoder: JsonEncoder[T]): Response = {
     option match {
