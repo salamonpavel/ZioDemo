@@ -10,7 +10,7 @@ import za.co.absa.fadb.naming.implementations.SnakeCaseNaming.Implicits._
 import za.co.absa.fadb.slick.FaDbPostgresProfile.api._
 import za.co.absa.fadb.slick.{SlickFunction, SlickFunctionWithStatusSupport, SlickPgEngine}
 import za.co.absa.fadb.status.handling.implementations.StandardStatusHandling
-import zio.{ZIO, ZLayer}
+import zio._
 
 /**
  *  A trait representing the schema for actors.
@@ -87,7 +87,7 @@ object ActorsSchemaImpl {
   /**
    *  A ZLayer that provides live implementation of ActorsSchema.
    */
-  val live: ZLayer[PostgresDatabaseProvider, Nothing, ActorsSchema] = ZLayer {
+  val live: URLayer[PostgresDatabaseProvider, ActorsSchema] = ZLayer {
     for {
       dbProvider <- ZIO.service[PostgresDatabaseProvider]
     } yield new ActorsSchemaImpl()(dbProvider.dbEngine)

@@ -3,7 +3,7 @@ package com.github.salamonpavel.zio.database
 import com.typesafe.config.{Config, ConfigFactory}
 import slick.jdbc.JdbcBackend.Database
 import za.co.absa.fadb.slick.SlickPgEngine
-import zio.{ConfigProvider, ULayer, ZIO, ZLayer}
+import zio._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 

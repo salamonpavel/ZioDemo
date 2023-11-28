@@ -5,7 +5,7 @@ import com.github.salamonpavel.zio.model.{Actor, CreateActorRequestBody}
 import com.github.salamonpavel.zio.service.ActorsService
 import com.github.salamonpavel.zio.util.{Constants, QueryParamsParser}
 import zio.http.QueryParams
-import zio.{ZIO, ZLayer}
+import zio._
 
 /**
  *  A trait representing the controller for actors.
@@ -18,7 +18,7 @@ trait ActorsController {
    *  @param queryParams The query parameters from the HTTP request.
    *  @return A ZIO effect that produces an Option of Actor. The effect may fail with an AppError.
    */
-  def findById(queryParams: QueryParams): ZIO[Any, AppError, Option[Actor]]
+  def findById(queryParams: QueryParams): IO[AppError, Option[Actor]]
 
   /**
    *  Creates an actor.
@@ -27,7 +27,7 @@ trait ActorsController {
    *  @return A ZIO effect returning Unit as a result of Actor creation.
    *          The effect may fail with an AppError if the actor cannot be created.
    */
-  def create(createActorRequestBody: CreateActorRequestBody): ZIO[Any, AppError, Unit]
+  def create(createActorRequestBody: CreateActorRequestBody): IO[AppError, Unit]
 }
 
 object ActorsController {
@@ -67,7 +67,7 @@ class ActorsControllerImpl(queryParamsParser: QueryParamsParser, actorsService: 
    *  @param queryParams The query parameters from the HTTP request.
    *  @return A ZIO effect that produces an Option of Actor. The effect may fail with an AppError.
    */
-  override def findById(queryParams: QueryParams): ZIO[Any, AppError, Option[Actor]] = {
+  override def findById(queryParams: QueryParams): IO[AppError, Option[Actor]] = {
     for {
       id    <- queryParamsParser.parseRequiredInt(queryParams, Constants.ID)
       _     <- ZIO.logDebug("Trying to find an actor by ID.")
@@ -82,7 +82,7 @@ class ActorsControllerImpl(queryParamsParser: QueryParamsParser, actorsService: 
    *  @return A ZIO effect returning Unit as a result of Actor creation.
    *          The effect may fail with an AppError if the actor cannot be created.
    */
-  override def create(createActorRequestBody: CreateActorRequestBody): ZIO[Any, AppError, Unit] = {
+  override def create(createActorRequestBody: CreateActorRequestBody): IO[AppError, Unit] = {
     for {
       _ <- ZIO.logDebug(
         s"Trying to create an actor with first name ${createActorRequestBody.firstName} " +
@@ -98,7 +98,7 @@ object ActorsControllerImpl {
   /**
    *  A ZLayer that provides live implementation of ActorsController.
    */
-  val live: ZLayer[QueryParamsParser with ActorsService, Nothing, ActorsController] =
+  val live: URLayer[QueryParamsParser with ActorsService, ActorsController] =
     ZLayer {
       for {
         queryParamsParser <- ZIO.service[QueryParamsParser]

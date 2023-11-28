@@ -3,7 +3,7 @@ package com.github.salamonpavel.zio.repository
 import com.github.salamonpavel.zio.database.MoviesSchema
 import com.github.salamonpavel.zio.exception.DatabaseError
 import com.github.salamonpavel.zio.model.Movie
-import zio.{ZIO, ZLayer}
+import zio._
 
 import scala.concurrent.ExecutionContext
 
@@ -19,7 +19,7 @@ trait MoviesRepository {
    *  @return A ZIO effect that requires a MoviesRepository and produces an Option of Movie.
    *          The effect may fail with a DatabaseError.
    */
-  def getMovieById(id: Int): ZIO[Any, DatabaseError, Option[Movie]]
+  def getMovieById(id: Int): IO[DatabaseError, Option[Movie]]
 }
 
 /**
@@ -33,7 +33,7 @@ class MoviesRepositoryImpl(schema: MoviesSchema) extends MoviesRepository {
    *  @param id The ID of the movie.
    *  @return A ZIO effect that produces an Option of Movie. The effect may fail with a DatabaseError.
    */
-  override def getMovieById(id: Int): ZIO[Any, DatabaseError, Option[Movie]] = {
+  override def getMovieById(id: Int): IO[DatabaseError, Option[Movie]] = {
     ZIO
       .fromFuture { implicit ec: ExecutionContext => schema.getMovieById(id) }
       .tap {
@@ -50,7 +50,7 @@ object MoviesRepositoryImpl {
   /**
    *  A ZLayer that provides live implementation of MoviesRepository.
    */
-  val live: ZLayer[MoviesSchema, Nothing, MoviesRepository] = ZLayer {
+  val live: URLayer[MoviesSchema, MoviesRepository] = ZLayer {
     for {
       schema <- ZIO.service[MoviesSchema]
     } yield new MoviesRepositoryImpl(schema)

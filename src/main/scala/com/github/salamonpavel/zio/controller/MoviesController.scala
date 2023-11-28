@@ -4,7 +4,7 @@ import com.github.salamonpavel.zio.exception.AppError
 import com.github.salamonpavel.zio.model.Movie
 import com.github.salamonpavel.zio.service.MoviesService
 import com.github.salamonpavel.zio.util.{Constants, QueryParamsParser}
-import zio.{ZIO, ZLayer}
+import zio._
 import zio.http.QueryParams
 
 /**
@@ -18,7 +18,7 @@ trait MoviesController {
    *  @param queryParams The query parameters from the HTTP request.
    *  @return A ZIO effect that produces an Option of Movie. The effect may fail with an AppError.
    */
-  def findById(queryParams: QueryParams): ZIO[Any, AppError, Option[Movie]]
+  def findById(queryParams: QueryParams): IO[AppError, Option[Movie]]
 }
 
 object MoviesController {
@@ -47,7 +47,7 @@ class MoviesControllerImpl(queryParamsParser: QueryParamsParser, moviesService: 
    *  @param queryParams The query parameters from the HTTP request.
    *  @return A ZIO effect that produces an Option of Movie. The effect may fail with an AppError.
    */
-  override def findById(queryParams: QueryParams): ZIO[Any, AppError, Option[Movie]] = {
+  override def findById(queryParams: QueryParams): IO[AppError, Option[Movie]] = {
     for {
       id    <- queryParamsParser.parseRequiredInt(queryParams, Constants.ID)
       _     <- ZIO.logDebug("Trying to find a movie by ID.")
@@ -61,7 +61,7 @@ object MoviesControllerImpl {
   /**
    *  A ZLayer that provides live implementation of MoviesController.
    */
-  val live: ZLayer[QueryParamsParser with MoviesService, Nothing, MoviesController] = ZLayer {
+  val live: URLayer[QueryParamsParser with MoviesService, MoviesController] = ZLayer {
     for {
       queryParamsParser <- ZIO.service[QueryParamsParser]
       moviesService     <- ZIO.service[MoviesService]

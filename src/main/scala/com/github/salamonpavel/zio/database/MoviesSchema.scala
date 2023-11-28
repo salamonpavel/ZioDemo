@@ -9,7 +9,7 @@ import za.co.absa.fadb.DBSchema
 import za.co.absa.fadb.naming.implementations.SnakeCaseNaming.Implicits._
 import za.co.absa.fadb.slick.FaDbPostgresProfile.api._
 import za.co.absa.fadb.slick.{SlickFunction, SlickPgEngine}
-import zio.{ZIO, ZLayer}
+import zio._
 
 /**
  *  A trait representing the schema for movies.
@@ -60,7 +60,7 @@ object MoviesSchemaImpl {
   /**
    *  A ZLayer that provides live implementation of MoviesSchema.
    */
-  val live: ZLayer[PostgresDatabaseProvider, Nothing, MoviesSchema] = ZLayer {
+  val live: URLayer[PostgresDatabaseProvider, MoviesSchema] = ZLayer {
     for {
       dbProvider <- ZIO.service[PostgresDatabaseProvider]
     } yield new MoviesSchemaImpl()(dbProvider.dbEngine)

@@ -1,7 +1,7 @@
 package com.github.salamonpavel.zio.util
 
 import com.github.salamonpavel.zio.exception.{AppError, ParameterFormatError, ParameterMissingError}
-import zio.{ULayer, ZIO, ZLayer}
+import zio._
 import zio.http.QueryParams
 
 import scala.util.Try
@@ -19,7 +19,7 @@ trait QueryParamsParser {
    *  @return A ZIO effect that produces an integer.
    *         The effect may fail with an AppError if the parameter is missing or not a valid integer.
    */
-  def parseRequiredInt(queryParams: QueryParams, param: String): ZIO[Any, AppError, Int]
+  def parseRequiredInt(queryParams: QueryParams, param: String): IO[AppError, Int]
 }
 
 object QueryParamsParser {
@@ -56,7 +56,7 @@ class QueryParamsParserImpl extends QueryParamsParser {
   override def parseRequiredInt(
     queryParams: QueryParams,
     param: String
-  ): ZIO[Any, AppError, Int] = {
+  ): IO[AppError, Int] = {
     for {
       paramStr <- ZIO
         .fromOption(queryParams.get(param))

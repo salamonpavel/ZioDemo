@@ -75,7 +75,7 @@ object Routes {
    *  @param error The error to handle.
    *  @return A ZIO effect that produces the response.
    */
-  private def handleError(error: Throwable): ZIO[Any, Nothing, Response] = {
+  private def handleError(error: Throwable): UIO[Response] = {
     ZIO.succeed(Response.text(s"Error: $error").setStatus(Status.BadRequest))
   }
 
