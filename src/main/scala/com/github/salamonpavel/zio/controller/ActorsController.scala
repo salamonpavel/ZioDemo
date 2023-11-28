@@ -1,11 +1,12 @@
 package com.github.salamonpavel.zio.controller
 
 import com.github.salamonpavel.zio.exception.AppError
-import com.github.salamonpavel.zio.model.{Actor, CreateActorRequestBody}
+import com.github.salamonpavel.zio.model.CreateActorRequestBody
 import com.github.salamonpavel.zio.service.ActorsService
-import com.github.salamonpavel.zio.util.{Constants, QueryParamsParser}
-import zio.http.QueryParams
+import com.github.salamonpavel.zio.util.{Constants, HttpRequestParser, HttpResponseBuilder}
 import zio._
+import zio.http._
+import zio.http.model.Status
 
 /**
  *  A trait representing the controller for actors.
@@ -15,19 +16,19 @@ trait ActorsController {
   /**
    *  Finds an actor by ID.
    *
-   *  @param queryParams The query parameters from the HTTP request.
+   *  @param request The HTTP request to find an actor.
    *  @return A ZIO effect that produces an Option of Actor. The effect may fail with an AppError.
    */
-  def findById(queryParams: QueryParams): IO[AppError, Option[Actor]]
+  def findActorById(request: Request): IO[AppError, Response]
 
   /**
    *  Creates an actor.
    *
-   *  @param createActorRequestBody The request to create an actor.
+   *  @param request The request to create an actor.
    *  @return A ZIO effect returning Unit as a result of Actor creation.
    *          The effect may fail with an AppError if the actor cannot be created.
    */
-  def create(createActorRequestBody: CreateActorRequestBody): IO[AppError, Unit]
+  def createActor(request: Request): IO[AppError, Response]
 }
 
 object ActorsController {
@@ -35,61 +36,61 @@ object ActorsController {
   /**
    *  Finds an actor by ID. This is an accessor method that requires an ActorsController.
    *
-   *  @param queryParams The query parameters from the HTTP request.
+   *  @param request The HTTP request to find an actor.
    *  @return A ZIO effect that requires an ActorsController and produces an Option of Actor.
    *          The effect may fail with an AppError.
    */
-  def findById(queryParams: QueryParams): ZIO[ActorsController, AppError, Option[Actor]] = {
-    ZIO.serviceWithZIO[ActorsController](_.findById(queryParams))
+  def findActorById(request: Request): ZIO[ActorsController, AppError, Response] = {
+    ZIO.serviceWithZIO[ActorsController](_.findActorById(request))
   }
 
   /**
    *  Creates an actor. This is an accessor method that requires an ActorsController.
    *
-   *  @param createActorRequestBody The request to create an actor.
+   *  @param request The request to create an actor.
    *  @return A ZIO effect that requires an ActorsController and produces a Unit.
    *          The effect may fail with an AppError if the actor cannot be created.
    */
-  def create(createActorRequestBody: CreateActorRequestBody): ZIO[ActorsController, AppError, Unit] = {
-    ZIO.serviceWithZIO[ActorsController](_.create(createActorRequestBody))
+  def createActor(request: Request): ZIO[ActorsController, AppError, Response] = {
+    ZIO.serviceWithZIO[ActorsController](_.createActor(request))
   }
 }
 
 /**
  *  An implementation of the ActorsController trait.
  */
-class ActorsControllerImpl(queryParamsParser: QueryParamsParser, actorsService: ActorsService)
-    extends ActorsController {
+class ActorsControllerImpl(
+  httpRequestParser: HttpRequestParser,
+  httpResponseBuilder: HttpResponseBuilder,
+  actorsService: ActorsService
+) extends ActorsController {
 
   /**
    *  Finds an actor by ID.
    *
-   *  @param queryParams The query parameters from the HTTP request.
+   *  @param request The HTTP request to find an actor.
    *  @return A ZIO effect that produces an Option of Actor. The effect may fail with an AppError.
    */
-  override def findById(queryParams: QueryParams): IO[AppError, Option[Actor]] = {
+  override def findActorById(request: Request): IO[AppError, Response] = {
     for {
-      id    <- queryParamsParser.parseRequiredInt(queryParams, Constants.ID)
-      _     <- ZIO.logDebug("Trying to find an actor by ID.")
-      actor <- actorsService.findActorById(id)
-    } yield actor
+      id       <- httpRequestParser.parseRequiredInt(request.url.queryParams, Constants.ID)
+      actor    <- actorsService.findActorById(id)
+      response <- ZIO.succeed(httpResponseBuilder.optionToResponse(actor))
+    } yield response
   }
 
   /**
    *  Creates an actor.
    *
-   *  @param createActorRequestBody The request to create an actor.
+   *  @param request The request to create an actor.
    *  @return A ZIO effect returning Unit as a result of Actor creation.
    *          The effect may fail with an AppError if the actor cannot be created.
    */
-  override def create(createActorRequestBody: CreateActorRequestBody): IO[AppError, Unit] = {
+  override def createActor(request: Request): IO[AppError, Response] = {
     for {
-      _ <- ZIO.logDebug(
-        s"Trying to create an actor with first name ${createActorRequestBody.firstName} " +
-          s"and last name ${createActorRequestBody.lastName}."
-      )
-      _ <- actorsService.createActor(createActorRequestBody)
-    } yield ()
+      createActorRequestBody <- httpRequestParser.parseRequestBody[CreateActorRequestBody](request)
+      _                      <- actorsService.createActor(createActorRequestBody)
+    } yield Response.status(Status.Created)
   }
 }
 
@@ -98,11 +99,12 @@ object ActorsControllerImpl {
   /**
    *  A ZLayer that provides live implementation of ActorsController.
    */
-  val live: URLayer[QueryParamsParser with ActorsService, ActorsController] =
+  val live: URLayer[HttpRequestParser with HttpResponseBuilder with ActorsService, ActorsController] =
     ZLayer {
       for {
-        queryParamsParser <- ZIO.service[QueryParamsParser]
-        actorsService     <- ZIO.service[ActorsService]
-      } yield new ActorsControllerImpl(queryParamsParser, actorsService)
+        httpRequestParser   <- ZIO.service[HttpRequestParser]
+        httpResponseBuilder <- ZIO.service[HttpResponseBuilder]
+        actorsService       <- ZIO.service[ActorsService]
+      } yield new ActorsControllerImpl(httpRequestParser, httpResponseBuilder, actorsService)
     }
 }

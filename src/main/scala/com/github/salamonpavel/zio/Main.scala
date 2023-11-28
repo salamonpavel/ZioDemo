@@ -4,7 +4,7 @@ import com.github.salamonpavel.zio.controller.{ActorsControllerImpl, MoviesContr
 import com.github.salamonpavel.zio.database.{ActorsSchemaImpl, MoviesSchemaImpl, PostgresDatabaseProvider}
 import com.github.salamonpavel.zio.repository.{ActorsRepositoryImpl, MoviesRepositoryImpl}
 import com.github.salamonpavel.zio.service.{ActorsServiceImpl, MoviesServiceImpl}
-import com.github.salamonpavel.zio.util.QueryParamsParserImpl
+import com.github.salamonpavel.zio.util.HttpRequestParserImpl
 import zio.config.typesafe.TypesafeConfigProvider
 import zio.http.Server
 import zio.logging.consoleLogger
@@ -30,7 +30,7 @@ object Main extends ZIOAppDefault {
       .serve(Routes.allRoutes)
       .provide(
         Server.default,
-        QueryParamsParserImpl.live,
+        HttpRequestParserImpl.live,
         ActorsControllerImpl.live,
         ActorsServiceImpl.live,
         ActorsRepositoryImpl.live,

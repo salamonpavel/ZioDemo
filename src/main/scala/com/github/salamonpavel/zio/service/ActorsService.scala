@@ -41,10 +41,7 @@ class ActorsServiceImpl(actorsRepository: ActorsRepository) extends ActorsServic
    *  @return A ZIO effect that produces an Option of Actor. The effect may fail with a DatabaseError.
    */
   override def findActorById(id: Int): IO[DatabaseError, Option[Actor]] = {
-    for {
-      _     <- ZIO.logDebug("Trying to find an actor by ID.")
-      actor <- actorsRepository.getActorById(id)
-    } yield actor
+    actorsRepository.getActorById(id)
   }
 
   /**
@@ -54,12 +51,7 @@ class ActorsServiceImpl(actorsRepository: ActorsRepository) extends ActorsServic
    *  @return A ZIO effect that produces an Actor. The effect may fail with a DatabaseError.
    */
   override def createActor(createActorRequestBody: CreateActorRequestBody): IO[DatabaseError, Unit] = {
-    for {
-      _ <- ZIO.logDebug(
-        s"Trying to create an actor with first name ${createActorRequestBody.firstName} and last name ${createActorRequestBody.lastName}."
-      )
-      actor <- actorsRepository.createActor(createActorRequestBody)
-    } yield actor
+    actorsRepository.createActor(createActorRequestBody)
   }
 }
 
