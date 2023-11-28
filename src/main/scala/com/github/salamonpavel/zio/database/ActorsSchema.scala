@@ -2,7 +2,7 @@ package com.github.salamonpavel.zio.database
 
 import com.github.salamonpavel.zio.database.ActorsSchemaImpl.{CreateActor, GetActorById}
 import com.github.salamonpavel.zio.model.{Actor, CreateActorRequestBody}
-import com.github.salamonpavel.zio.util.Constants.SCHEMA
+import com.github.salamonpavel.zio.Constants.SCHEMA
 import slick.jdbc.{GetResult, PositionedResult, SQLActionBuilder}
 import za.co.absa.fadb.DBFunction._
 import za.co.absa.fadb.DBSchema

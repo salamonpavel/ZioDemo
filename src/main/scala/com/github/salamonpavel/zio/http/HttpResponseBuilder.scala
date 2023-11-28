@@ -1,4 +1,4 @@
-package com.github.salamonpavel.zio.util
+package com.github.salamonpavel.zio.http
 
 import zio._
 import zio.http.Response

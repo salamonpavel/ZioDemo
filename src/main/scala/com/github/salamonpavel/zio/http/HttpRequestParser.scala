@@ -1,4 +1,4 @@
-package com.github.salamonpavel.zio.util
+package com.github.salamonpavel.zio.http
 
 import com.github.salamonpavel.zio.exception._
 import zio._

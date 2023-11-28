@@ -1,9 +1,10 @@
 package com.github.salamonpavel.zio.controller
 
+import com.github.salamonpavel.zio.Constants
 import com.github.salamonpavel.zio.exception.AppError
+import com.github.salamonpavel.zio.http.{HttpRequestParser, HttpResponseBuilder}
 import com.github.salamonpavel.zio.model.CreateActorRequestBody
 import com.github.salamonpavel.zio.service.ActorsService
-import com.github.salamonpavel.zio.util.{Constants, HttpRequestParser, HttpResponseBuilder}
 import zio._
 import zio.http._
 import zio.http.model.Status
