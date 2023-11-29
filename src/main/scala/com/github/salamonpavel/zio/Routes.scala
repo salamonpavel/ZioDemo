@@ -1,6 +1,6 @@
 package com.github.salamonpavel.zio
 
-import com.github.salamonpavel.zio.Constants.{ACTORS, MOVIES}
+import com.github.salamonpavel.zio.Constants.{ACTORS, API, MOVIES, V1}
 import com.github.salamonpavel.zio.controller.{ActorsController, MoviesController}
 import com.github.salamonpavel.zio.exception.AppError
 import zio._
@@ -16,10 +16,10 @@ object Routes {
    *  The routes for actor-related requests.
    */
   private val actorsRoutes = Http.collectZIO[Request] {
-    case request @ Method.GET -> !! / ACTORS =>
+    case request @ Method.GET -> !! / API / V1 / ACTORS =>
       ActorsController.findActorById(request).catchAll(handleError)
 
-    case request @ Method.POST -> !! / ACTORS =>
+    case request @ Method.POST -> !! / API / V1 / ACTORS =>
       ActorsController.createActor(request).catchAll(handleError)
   }
 
@@ -27,7 +27,7 @@ object Routes {
    *  The routes for movie-related requests.
    */
   private val moviesRoutes = Http.collectZIO[Request] {
-    case request @ Method.GET -> !! / MOVIES =>
+    case request @ Method.GET -> !! / API / V1 / MOVIES =>
       MoviesController.findMovieById(request).catchAll(handleError)
   }
 
