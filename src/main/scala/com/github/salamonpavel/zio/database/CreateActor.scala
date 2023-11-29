@@ -36,6 +36,6 @@ object CreateActor {
   val live: ZLayer[PostgresDatabaseProvider, Nothing, CreateActor] = ZLayer {
     for {
       dbProvider <- ZIO.service[PostgresDatabaseProvider]
-    } yield new CreateActor()(ActorsSchema, dbProvider.dbEngine)
+    } yield new CreateActor()(Runs, dbProvider.dbEngine)
   }
 }

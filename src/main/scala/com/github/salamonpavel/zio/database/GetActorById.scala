@@ -37,6 +37,6 @@ object GetActorById {
   val live: ZLayer[PostgresDatabaseProvider, Nothing, GetActorById] = ZLayer {
     for {
       dbProvider <- ZIO.service[PostgresDatabaseProvider]
-    } yield new GetActorById()(ActorsSchema, dbProvider.dbEngine)
+    } yield new GetActorById()(Runs, dbProvider.dbEngine)
   }
 }
