@@ -1,6 +1,6 @@
 package com.github.salamonpavel.zio.repository
 
-import com.github.salamonpavel.zio.database.MoviesSchema
+import com.github.salamonpavel.zio.database.GetMovieById
 import com.github.salamonpavel.zio.exception.DatabaseError
 import com.github.salamonpavel.zio.model.Movie
 import zio._
@@ -25,14 +25,14 @@ trait MoviesRepository {
 /**
  *  An implementation of the MoviesRepository trait.
  */
-class MoviesRepositoryImpl(schema: MoviesSchema) extends MoviesRepository {
+class MoviesRepositoryImpl(getMovieByIdFn: GetMovieById) extends MoviesRepository {
 
   /**
    *  Gets a movie by ID.
    */
   override def getMovieById(id: Int): IO[DatabaseError, Option[Movie]] = {
     ZIO
-      .fromFuture { implicit ec: ExecutionContext => schema.getMovieById(id) }
+      .fromFuture { implicit ec: ExecutionContext => getMovieByIdFn(id) }
       .tap {
         case Some(movie) => ZIO.logInfo(s"Retrieved movie with ID $id: $movie")
         case None        => ZIO.logInfo(s"Movie with ID $id not found.")
@@ -47,9 +47,9 @@ object MoviesRepositoryImpl {
   /**
    *  A ZLayer that provides live implementation of MoviesRepository.
    */
-  val live: URLayer[MoviesSchema, MoviesRepository] = ZLayer {
+  val live: URLayer[GetMovieById, MoviesRepository] = ZLayer {
     for {
-      schema <- ZIO.service[MoviesSchema]
-    } yield new MoviesRepositoryImpl(schema)
+      getMovieByIdFn <- ZIO.service[GetMovieById]
+    } yield new MoviesRepositoryImpl(getMovieByIdFn)
   }
 }

@@ -9,7 +9,7 @@ lazy val root = (project in file("."))
 
 lazy val zioVersion = "2.0.19"
 lazy val zioConfigVersion = "4.0.0-RC16"
-lazy val faDbVersion = "0.2.0"
+lazy val faDbVersion = "0.2.1-local+0-20b28a07+20231128-2139-SNAPSHOT" // 0.2.0
 
 // to be able to fetch balta from local maven repo
 // you can publish balta to local maven repo by running `sbt publishM2`

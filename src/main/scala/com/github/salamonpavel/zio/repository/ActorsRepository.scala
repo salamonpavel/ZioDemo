@@ -1,6 +1,6 @@
 package com.github.salamonpavel.zio.repository
 
-import com.github.salamonpavel.zio.database.ActorsSchema
+import com.github.salamonpavel.zio.database.{CreateActor, GetActorById}
 import com.github.salamonpavel.zio.exception.DatabaseError
 import com.github.salamonpavel.zio.model.{Actor, CreateActorRequestBody}
 import zio._
@@ -34,14 +34,14 @@ trait ActorsRepository {
 /**
  *  An implementation of the ActorsRepository trait.
  */
-class ActorsRepositoryImpl(schema: ActorsSchema) extends ActorsRepository {
+class ActorsRepositoryImpl(getActorByIdFn: GetActorById, createActorFn: CreateActor) extends ActorsRepository {
 
   /**
    *  Gets an actor by ID.
    */
   override def getActorById(id: Int): IO[DatabaseError, Option[Actor]] = {
     ZIO
-      .fromFuture { implicit ec: ExecutionContext => schema.getActorById(id) }
+      .fromFuture { implicit ec: ExecutionContext => getActorByIdFn(id) }
       .tap {
         case Some(actor) => ZIO.logInfo(s"Retrieved actor with ID $id: $actor")
         case None        => ZIO.logInfo(s"Actor with ID $id not found.")
@@ -55,7 +55,7 @@ class ActorsRepositoryImpl(schema: ActorsSchema) extends ActorsRepository {
    */
   override def createActor(createActorRequestBody: CreateActorRequestBody): IO[DatabaseError, Unit] = {
     ZIO
-      .fromFuture { implicit ec: ExecutionContext => schema.createActor(createActorRequestBody) }
+      .fromFuture { implicit ec: ExecutionContext => createActorFn(createActorRequestBody) }
       .tap(_ =>
         ZIO.logInfo(
           s"Created actor with first name: ${createActorRequestBody.firstName} " +
@@ -72,9 +72,10 @@ object ActorsRepositoryImpl {
   /**
    *  A ZLayer that provides live implementation of ActorsRepository.
    */
-  val live: URLayer[ActorsSchema, ActorsRepository] = ZLayer {
+  val live: URLayer[GetActorById with CreateActor, ActorsRepositoryImpl] = ZLayer {
     for {
-      schema <- ZIO.service[ActorsSchema]
-    } yield new ActorsRepositoryImpl(schema)
+      getActorByIdFn <- ZIO.service[GetActorById]
+      createActorFn  <- ZIO.service[CreateActor]
+    } yield new ActorsRepositoryImpl(getActorByIdFn, createActorFn)
   }
 }
