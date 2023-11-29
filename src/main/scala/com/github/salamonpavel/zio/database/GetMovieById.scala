@@ -12,7 +12,7 @@ import zio._
  *  A class representing a function to get a movie by ID.
  */
 class GetMovieById(implicit override val schema: DBSchema, val dbEngine: SlickPgEngine)
-  extends DBOptionalResultFunction[Int, Movie, SlickPgEngine]
+    extends DBOptionalResultFunction[Int, Movie, SlickPgEngine]
     with SlickFunction[Int, Movie] {
 
   override def fieldsToSelect: Seq[String] = super.fieldsToSelect ++ Seq("movie_id", "movie_name", "movie_length")

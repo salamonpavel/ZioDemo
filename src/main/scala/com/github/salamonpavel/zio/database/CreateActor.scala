@@ -13,7 +13,7 @@ import zio._
  *  A class representing a function to create an actor.
  */
 class CreateActor(implicit override val schema: DBSchema, val dbEngine: SlickPgEngine)
-  extends DBSingleResultFunction[CreateActorRequestBody, Unit, SlickPgEngine]
+    extends DBSingleResultFunction[CreateActorRequestBody, Unit, SlickPgEngine]
     with SlickFunctionWithStatusSupport[CreateActorRequestBody, Unit]
     with StandardStatusHandling {
 
