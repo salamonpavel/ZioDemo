@@ -26,9 +26,8 @@ object Routes {
   /**
    *  The routes for movie-related requests.
    */
-  private val moviesRoutes = Http.collectZIO[Request] {
-    case request @ Method.GET -> !! / MOVIES =>
-      MoviesController.findMovieById(request).catchAll(handleError)
+  private val moviesRoutes = Http.collectZIO[Request] { case request @ Method.GET -> !! / MOVIES =>
+    MoviesController.findMovieById(request).catchAll(handleError)
   }
 
   val allRoutes: Http[MoviesController with ActorsController, Nothing, Request, Response] =
@@ -43,9 +42,17 @@ object Routes {
   private def handleError(error: Throwable): UIO[Response] = {
     error match {
       case appError: AppError =>
-        ZIO.succeed(Response.text(s"Error: ${appError.message}").setStatus(Status.BadRequest))
+        ZIO.succeed(
+          Response
+            .text(s"An error occurred while processing your request: ${appError.message}")
+            .setStatus(Status.BadRequest)
+        )
       case _ =>
-        ZIO.succeed(Response.text("Internal server error").setStatus(Status.InternalServerError))
+        ZIO.succeed(
+          Response
+            .text("An unexpected error occurred. Please try again later.")
+            .setStatus(Status.InternalServerError)
+        )
     }
   }
 
