@@ -7,4 +7,4 @@ import za.co.absa.fadb.naming.implementations.SnakeCaseNaming.Implicits._
 /**
  * An object representing a database schema.
  */
-object ActorsSchema extends DBSchema(Some(SCHEMA))
+object ActorsSchema extends DBSchema(SCHEMA)
