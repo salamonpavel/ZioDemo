@@ -23,6 +23,12 @@ trait ActorsController {
    */
   def findActorById(id: Int): IO[AppError, Response]
 
+  /**
+   *  Finds actors by first name and/or last name.
+   *
+   *  @param request The request to find actors.
+   *  @return A ZIO effect that produces a list of actors. The effect may fail with an AppError.
+   */
   def findActors(request: Request): IO[AppError, Response]
 
   /**
@@ -44,6 +50,9 @@ object ActorsController {
     ZIO.serviceWithZIO[ActorsController](_.findActorById(id))
   }
 
+  /**
+   *  Finds actors by first name and/or last name. This is an accessor method that requires an ActorsController.
+   */
   def findActors(request: Request): ZIO[ActorsController, AppError, Response] = {
     ZIO.serviceWithZIO[ActorsController](_.findActors(request))
   }
@@ -75,6 +84,9 @@ class ActorsControllerImpl(
     } yield response
   }
 
+  /**
+   *  Finds actors by first name and/or last name.
+   */
   override def findActors(request: Request): IO[AppError, Response] = {
     for {
       firstName <- httpRequestParser.getOptionalStringParam(request.url.queryParams, FIRST_NAME)
