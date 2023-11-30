@@ -1,10 +1,10 @@
 package com.github.salamonpavel.zio.model
 
-/** 
+/**
  *  Enumeration for possible statuses in the context of a REST API implementing CRUD operations.
  */
-object Status extends Enumeration {
-  type Status = Value
+object ApiResponseStatus extends Enumeration {
+  type ApiResponseStatus = Value
 
   /** The operation was successful. This could be used for any successful GET, POST, PUT, or DELETE request. */
   val Success = Value("success")

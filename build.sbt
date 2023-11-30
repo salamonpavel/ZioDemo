@@ -22,8 +22,8 @@ libraryDependencies ++= Seq(
   "dev.zio" %% "zio-http" % "0.0.5",
   // zio logging
   "dev.zio" %% "zio-logging" % "2.1.15",
-  // zio json
-  "dev.zio" %% "zio-json" % "0.6.2",
+  // play json
+  "com.typesafe.play" %% "play-json" % "2.10.3",
   // zio config typesafe
   "dev.zio" %% "zio-config" % zioConfigVersion,
   "dev.zio" %% "zio-config-typesafe" % zioConfigVersion,

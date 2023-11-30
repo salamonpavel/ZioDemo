@@ -1,9 +1,9 @@
 package com.github.salamonpavel.zio.http
 
 import com.github.salamonpavel.zio.exception._
+import play.api.libs.json.{Json, Reads}
 import zio._
 import zio.http.{QueryParams, Request}
-import zio.json.{DecoderOps, JsonDecoder}
 
 import scala.util.Try
 
@@ -28,7 +28,9 @@ trait HttpRequestParser {
    *  @param request The request to parse.
    *  @return A ZIO effect that produces an A. The effect may fail with a RequestBodyError.
    */
-  def parseRequestBody[A](request: Request)(implicit decoder: JsonDecoder[A]): IO[RequestBodyError, A]
+  def parseRequestBody[A](request: Request)(implicit reads: Reads[A]): IO[RequestBodyError, A]
+
+  def getOptionalStringParam(queryParams: QueryParams, param: String): UIO[Option[String]]
 }
 
 /**
@@ -55,16 +57,20 @@ class HttpRequestParserImpl extends HttpRequestParser {
     } yield paramInt
   }
 
+  def getOptionalStringParam(queryParams: QueryParams, param: String): UIO[Option[String]] = {
+    ZIO.succeed(queryParams.get(param).map(_.asString))
+  }
+
   /**
    *  Parses the request body into an A.
    */
-  def parseRequestBody[A](request: Request)(implicit decoder: JsonDecoder[A]): IO[RequestBodyError, A] = {
+  def parseRequestBody[T](request: Request)(implicit reads: Reads[T]): IO[RequestBodyError, T] = {
     for {
       requestBody <- request.body.asString
         .mapError(error => RequestBodyError(s"The request body is invalid: $error"))
         .tapError(error => ZIO.logError(s"Failed to parse request body due to: ${error.message}"))
       parsedBody <- ZIO
-        .fromEither(requestBody.fromJson[A])
+        .fromEither(Json.parse(requestBody).validate[T].asEither)
         .mapError(error => RequestBodyError(s"The request body could not be parsed: $error"))
         .tapError(error => ZIO.logError(s"Failed to parse request body due to: ${error.message}"))
     } yield parsedBody

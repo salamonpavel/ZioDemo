@@ -40,6 +40,7 @@ object Main extends ZIOAppDefault {
         MoviesRepositoryImpl.live,
         PostgresDatabaseProvider.live,
         GetActorById.live,
+        GetActors.live,
         CreateActor.live,
         GetMovieById.live
       )

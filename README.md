@@ -1,5 +1,7 @@
 # ZIO Demo Application
 
+NOT UPDATED YET!!!
+
 This application is a simple REST API built with ZIO, a type-safe, composable library for building asynchronous and concurrent applications in Scala.
 
 ## Features

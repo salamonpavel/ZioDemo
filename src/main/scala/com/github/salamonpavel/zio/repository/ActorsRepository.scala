@@ -1,8 +1,8 @@
 package com.github.salamonpavel.zio.repository
 
-import com.github.salamonpavel.zio.database.{CreateActor, GetActorById}
+import com.github.salamonpavel.zio.database.{CreateActor, GetActorById, GetActors}
 import com.github.salamonpavel.zio.exception.DatabaseError
-import com.github.salamonpavel.zio.model.{Actor, CreateActorRequestBody}
+import com.github.salamonpavel.zio.model.{Actor, CreateActorRequestBody, GetActorsQueryParameters}
 import zio._
 
 import scala.concurrent.ExecutionContext
@@ -21,6 +21,8 @@ trait ActorsRepository {
    */
   def getActorById(id: Int): IO[DatabaseError, Option[Actor]]
 
+  def getActors(requestParameters: GetActorsQueryParameters): IO[DatabaseError, Seq[Actor]]
+
   /**
    *  Creates an actor. This is an accessor method that requires an ActorsRepository.
    *
@@ -34,7 +36,8 @@ trait ActorsRepository {
 /**
  *  An implementation of the ActorsRepository trait.
  */
-class ActorsRepositoryImpl(getActorByIdFn: GetActorById, createActorFn: CreateActor) extends ActorsRepository {
+class ActorsRepositoryImpl(getActorByIdFn: GetActorById, getActorsFn: GetActors, createActorFn: CreateActor)
+    extends ActorsRepository {
 
   /**
    *  Gets an actor by ID.
@@ -48,6 +51,24 @@ class ActorsRepositoryImpl(getActorByIdFn: GetActorById, createActorFn: CreateAc
       }
       .mapError(error => DatabaseError(error.getMessage))
       .tapError(error => ZIO.logError(s"Failed to retrieve actor with ID $id: ${error.message}"))
+  }
+
+  override def getActors(requestParameters: GetActorsQueryParameters): IO[DatabaseError, Seq[Actor]] = {
+    ZIO
+      .fromFuture { implicit ec: ExecutionContext => getActorsFn(requestParameters) }
+      .tap { actors =>
+        ZIO.logInfo(
+          s"Retrieved ${actors.size} actor(s) with first name: ${requestParameters.firstName} " +
+            s"and last name: ${requestParameters.lastName}."
+        )
+      }
+      .mapError(error => DatabaseError(error.getMessage))
+      .tapError(error =>
+        ZIO.logError(
+          s"Failed to retrieve actors with first name: ${requestParameters.firstName} " +
+            s"and last name: ${requestParameters.lastName}: ${error.message}"
+        )
+      )
   }
 
   /**
@@ -72,10 +93,11 @@ object ActorsRepositoryImpl {
   /**
    *  A ZLayer that provides live implementation of ActorsRepository.
    */
-  val live: URLayer[GetActorById with CreateActor, ActorsRepositoryImpl] = ZLayer {
+  val live: URLayer[GetActorById with GetActors with CreateActor, ActorsRepositoryImpl] = ZLayer {
     for {
       getActorByIdFn <- ZIO.service[GetActorById]
+      getActorsFn    <- ZIO.service[GetActors]
       createActorFn  <- ZIO.service[CreateActor]
-    } yield new ActorsRepositoryImpl(getActorByIdFn, createActorFn)
+    } yield new ActorsRepositoryImpl(getActorByIdFn, getActorsFn, createActorFn)
   }
 }

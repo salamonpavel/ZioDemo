@@ -1,10 +1,11 @@
 package com.github.salamonpavel.zio.controller
 
-import com.github.salamonpavel.zio.Constants
+import com.github.salamonpavel.zio.Constants.{FIRST_NAME, LAST_NAME}
 import com.github.salamonpavel.zio.exception.AppError
 import com.github.salamonpavel.zio.http.{HttpRequestParser, HttpResponseBuilder}
-import com.github.salamonpavel.zio.model.CreateActorRequestBody
+import com.github.salamonpavel.zio.model._
 import com.github.salamonpavel.zio.service.ActorsService
+import play.api.libs.json.Json
 import zio._
 import zio.http._
 import zio.http.model.Status
@@ -17,10 +18,12 @@ trait ActorsController {
   /**
    *  Finds an actor by ID.
    *
-   *  @param request The HTTP request to find an actor.
+   *  @param id The ID of the actor.
    *  @return A ZIO effect that produces an Option of Actor. The effect may fail with an AppError.
    */
-  def findActorById(request: Request): IO[AppError, Response]
+  def findActorById(id: Int): IO[AppError, Response]
+
+  def findActors(request: Request): IO[AppError, Response]
 
   /**
    *  Creates an actor.
@@ -37,8 +40,12 @@ object ActorsController {
   /**
    *  Finds an actor by ID. This is an accessor method that requires an ActorsController.
    */
-  def findActorById(request: Request): ZIO[ActorsController, AppError, Response] = {
-    ZIO.serviceWithZIO[ActorsController](_.findActorById(request))
+  def findActorById(id: Int): ZIO[ActorsController, AppError, Response] = {
+    ZIO.serviceWithZIO[ActorsController](_.findActorById(id))
+  }
+
+  def findActors(request: Request): ZIO[ActorsController, AppError, Response] = {
+    ZIO.serviceWithZIO[ActorsController](_.findActors(request))
   }
 
   /**
@@ -61,11 +68,21 @@ class ActorsControllerImpl(
   /**
    *  Finds an actor by ID.
    */
-  override def findActorById(request: Request): IO[AppError, Response] = {
+  override def findActorById(id: Int): IO[AppError, Response] = {
     for {
-      id       <- httpRequestParser.parseRequiredInt(request.url.queryParams, Constants.ID)
       actor    <- actorsService.findActorById(id)
       response <- ZIO.succeed(httpResponseBuilder.optionToResponse(actor))
+    } yield response
+  }
+
+  override def findActors(request: Request): IO[AppError, Response] = {
+    for {
+      firstName <- httpRequestParser.getOptionalStringParam(request.url.queryParams, FIRST_NAME)
+      lastName  <- httpRequestParser.getOptionalStringParam(request.url.queryParams, LAST_NAME)
+      actors    <- actorsService.findActors(GetActorsQueryParameters(firstName, lastName))
+      response <- ZIO.succeed {
+        Response.json(Json.toJson(MultiApiResponse[Actor](ApiResponseStatus.Success, actors)).toString)
+      }
     } yield response
   }
 

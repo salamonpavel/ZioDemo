@@ -1,6 +1,6 @@
 package com.github.salamonpavel.zio.model
 
-import zio.json.{DeriveJsonDecoder, JsonDecoder}
+import play.api.libs.json.{Json, Reads}
 
 /**
  *  A class representing a request to create an actor.
@@ -13,8 +13,7 @@ case class CreateActorRequestBody(firstName: String, lastName: String)
 object CreateActorRequestBody {
 
   /**
-   *  An implicit JsonDecoder for the CreateActor case class.
-   *  This decoder is used to convert JSON to instances of CreateActor.
+   *  A JSON reader for the CreateActorRequestBody class.
    */
-  implicit val decoder: JsonDecoder[CreateActorRequestBody] = DeriveJsonDecoder.gen[CreateActorRequestBody]
+  implicit val reads: Reads[CreateActorRequestBody] = Json.reads[CreateActorRequestBody]
 }

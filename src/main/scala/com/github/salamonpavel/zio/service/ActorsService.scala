@@ -1,7 +1,7 @@
 package com.github.salamonpavel.zio.service
 
 import com.github.salamonpavel.zio.exception.DatabaseError
-import com.github.salamonpavel.zio.model.{Actor, CreateActorRequestBody}
+import com.github.salamonpavel.zio.model.{Actor, CreateActorRequestBody, GetActorsQueryParameters}
 import com.github.salamonpavel.zio.repository.ActorsRepository
 import zio._
 
@@ -17,6 +17,8 @@ trait ActorsService {
    *  @return A ZIO effect that produces an Option of Actor. The effect may fail with a DatabaseError.
    */
   def findActorById(id: Int): IO[DatabaseError, Option[Actor]]
+
+  def findActors(requestParameters: GetActorsQueryParameters): IO[DatabaseError, Seq[Actor]]
 
   /**
    *  Creates an actor.
@@ -39,6 +41,10 @@ class ActorsServiceImpl(actorsRepository: ActorsRepository) extends ActorsServic
    */
   override def findActorById(id: Int): IO[DatabaseError, Option[Actor]] = {
     actorsRepository.getActorById(id)
+  }
+
+  override def findActors(requestParameters: GetActorsQueryParameters): IO[DatabaseError, Seq[Actor]] = {
+    actorsRepository.getActors(requestParameters)
   }
 
   /**

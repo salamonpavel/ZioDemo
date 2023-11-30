@@ -1,6 +1,6 @@
 package com.github.salamonpavel.zio.model
 
-import zio.json.{DeriveJsonEncoder, JsonEncoder}
+import play.api.libs.json.{Json, Writes}
 
 /**
  *  A case class representing an actor.
@@ -14,8 +14,7 @@ case class Actor(actorId: Int, firstName: String, lastName: String)
 object Actor {
 
   /**
-   *  An implicit JsonEncoder for the Actor case class.
-   *  This encoder is used to convert instances of Actor to JSON.
+   *  A JSON encoder for the Actor class.
    */
-  implicit val encoder: JsonEncoder[Actor] = DeriveJsonEncoder.gen[Actor]
+  implicit val writes: Writes[Actor] = Json.writes[Actor]
 }
