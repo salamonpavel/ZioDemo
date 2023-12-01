@@ -1,7 +1,6 @@
 package com.github.salamonpavel.zio
 
 private[zio] object Constants {
-  final val ID = "id"
   final val FIRST_NAME = "firstName" // either camelCase or snake_case
   final val LAST_NAME = "lastName"
   final val API = "api"

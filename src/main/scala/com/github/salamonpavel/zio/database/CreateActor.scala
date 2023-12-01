@@ -13,9 +13,11 @@ import zio._
  *  A class representing a function to create an actor.
  */
 class CreateActor(implicit override val schema: DBSchema, val dbEngine: SlickPgEngine)
-    extends DBSingleResultFunction[CreateActorRequestBody, Unit, SlickPgEngine]
-    with SlickFunctionWithStatusSupport[CreateActorRequestBody, Unit]
+    extends DBSingleResultFunction[CreateActorRequestBody, Int, SlickPgEngine]
+    with SlickFunctionWithStatusSupport[CreateActorRequestBody, Int]
     with StandardStatusHandling {
+
+  override def fieldsToSelect: Seq[String] = super.fieldsToSelect ++ Seq("o_actor_id")
 
   override protected def sql(createActorRequestBody: CreateActorRequestBody): SQLActionBuilder = {
     sql"""SELECT #$selectEntry
@@ -25,7 +27,7 @@ class CreateActor(implicit override val schema: DBSchema, val dbEngine: SlickPgE
             ) #$alias;"""
   }
 
-  override protected def slickConverter: GetResult[Unit] = GetResult { _ => }
+  protected def slickConverter: GetResult[Int] = GetResult(r => r.<<)
 }
 
 object CreateActor {

@@ -21,6 +21,13 @@ trait ActorsRepository {
    */
   def getActorById(id: Int): IO[DatabaseError, Option[Actor]]
 
+  /**
+   *  Gets actors by first name and/or last name.
+   *
+   *  @param requestParameters The query parameters to find actors.
+   *  @return A ZIO effect that requires an ActorsRepository and produces a sequence of actors.
+   *          The effect may fail with a DatabaseError.
+   */
   def getActors(requestParameters: GetActorsQueryParameters): IO[DatabaseError, Seq[Actor]]
 
   /**
@@ -30,7 +37,7 @@ trait ActorsRepository {
    *  @return A ZIO effect that requires an ActorsRepository and produces an Actor.
    *          The effect may fail with a DatabaseError.
    */
-  def createActor(createActorRequestBody: CreateActorRequestBody): IO[DatabaseError, Unit]
+  def createActor(createActorRequestBody: CreateActorRequestBody): IO[DatabaseError, Actor]
 }
 
 /**
@@ -53,6 +60,9 @@ class ActorsRepositoryImpl(getActorByIdFn: GetActorById, getActorsFn: GetActors,
       .tapError(error => ZIO.logError(s"Failed to retrieve actor with ID $id: ${error.message}"))
   }
 
+  /**
+   *  Gets actors by first name and/or last name.
+   */
   override def getActors(requestParameters: GetActorsQueryParameters): IO[DatabaseError, Seq[Actor]] = {
     ZIO
       .fromFuture { implicit ec: ExecutionContext => getActorsFn(requestParameters) }
@@ -74,13 +84,14 @@ class ActorsRepositoryImpl(getActorByIdFn: GetActorById, getActorsFn: GetActors,
   /**
    *  Creates an actor.
    */
-  override def createActor(createActorRequestBody: CreateActorRequestBody): IO[DatabaseError, Unit] = {
+  override def createActor(createActorRequestBody: CreateActorRequestBody): IO[DatabaseError, Actor] = {
     ZIO
       .fromFuture { implicit ec: ExecutionContext => createActorFn(createActorRequestBody) }
-      .tap(_ =>
+      .map(id => Actor(id, createActorRequestBody.firstName, createActorRequestBody.lastName))
+      .tap(actor =>
         ZIO.logInfo(
-          s"Created actor with first name: ${createActorRequestBody.firstName} " +
-            s"and last name: ${createActorRequestBody.lastName}."
+          s"Created actor with ID ${actor.actorId}, first name: ${actor.firstName}, " +
+            s"and last name: ${actor.lastName}."
         )
       )
       .mapError(error => DatabaseError(error.getMessage))

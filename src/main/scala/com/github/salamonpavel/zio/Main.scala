@@ -8,7 +8,7 @@ import com.github.salamonpavel.zio.service.{ActorsServiceImpl, MoviesServiceImpl
 import zio.config.typesafe.TypesafeConfigProvider
 import zio.http.Server
 import zio.logging.consoleLogger
-import zio.{Config, ConfigProvider, Runtime, Scope, ZIO, ZIOAppArgs, ZIOAppDefault, ZLayer}
+import zio._
 
 /**
  *  The main object of the application.

@@ -26,7 +26,7 @@ trait ActorsService {
    *  @param createActorRequestBody The request to create an actor.
    *  @return A ZIO effect that produces an Actor. The effect may fail with a DatabaseError.
    */
-  def createActor(createActorRequestBody: CreateActorRequestBody): IO[DatabaseError, Unit]
+  def createActor(createActorRequestBody: CreateActorRequestBody): IO[DatabaseError, Actor]
 }
 
 /**
@@ -50,7 +50,7 @@ class ActorsServiceImpl(actorsRepository: ActorsRepository) extends ActorsServic
   /**
    *  Creates an actor.
    */
-  override def createActor(createActorRequestBody: CreateActorRequestBody): IO[DatabaseError, Unit] = {
+  override def createActor(createActorRequestBody: CreateActorRequestBody): IO[DatabaseError, Actor] = {
     actorsRepository.createActor(createActorRequestBody)
   }
 }

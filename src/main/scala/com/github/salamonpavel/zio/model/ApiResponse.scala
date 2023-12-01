@@ -44,3 +44,11 @@ object MultiApiResponse {
  *  A trait that represents an unsuccessful API response containing an error message.
  */
 case class ErrorApiResponse(status: ApiResponseStatus, message: String) extends ApiResponse
+
+object ErrorApiResponse {
+
+  /**
+   *  A JSON encoder for the ErrorApiResponse class.
+   */
+  implicit val writes: Writes[ErrorApiResponse] = Json.writes[ErrorApiResponse]
+}
