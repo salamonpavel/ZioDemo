@@ -43,6 +43,9 @@ class ActorsServiceImpl(actorsRepository: ActorsRepository) extends ActorsServic
     actorsRepository.getActorById(id)
   }
 
+  /**
+   *  Finds actors by first name and/or last name.
+   */
   override def findActors(requestParameters: GetActorsQueryParameters): IO[DatabaseError, Seq[Actor]] = {
     actorsRepository.getActors(requestParameters)
   }
