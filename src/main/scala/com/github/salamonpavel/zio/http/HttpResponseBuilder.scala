@@ -82,7 +82,7 @@ class HttpResponseBuilderImpl extends HttpResponseBuilder {
       case _: ParameterMissingError => (Status.BadRequest, ApiResponseStatus.BadRequest)
       case _: ParameterFormatError  => (Status.BadRequest, ApiResponseStatus.BadRequest)
       case _: RequestBodyError      => (Status.BadRequest, ApiResponseStatus.BadRequest)
-      case _: DatabaseError         => (Status.InternalServerError, ApiResponseStatus.Error)
+      case _: ServiceError          => (Status.InternalServerError, ApiResponseStatus.Error)
       case _                        => (Status.BadRequest, ApiResponseStatus.Error)
     }
 

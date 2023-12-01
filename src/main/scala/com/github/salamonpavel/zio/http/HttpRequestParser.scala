@@ -30,6 +30,13 @@ trait HttpRequestParser {
    */
   def parseRequestBody[A](request: Request)(implicit reads: Reads[A]): IO[RequestBodyError, A]
 
+  /**
+   *  Parses an optional string parameter.
+   *
+   *  @param queryParams The query parameters to parse.
+   *  @param param The name of the parameter to parse.
+   *  @return A ZIO effect that produces an optional string.
+   */
   def getOptionalStringParam(queryParams: QueryParams, param: String): UIO[Option[String]]
 }
 
@@ -57,6 +64,9 @@ class HttpRequestParserImpl extends HttpRequestParser {
     } yield paramInt
   }
 
+  /**
+   *  Parses an optional string parameter.
+   */
   def getOptionalStringParam(queryParams: QueryParams, param: String): UIO[Option[String]] = {
     ZIO.succeed(queryParams.get(param).map(_.asString))
   }

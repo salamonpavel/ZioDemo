@@ -23,6 +23,6 @@ case class ParameterFormatError(message: String) extends AppError
 case class RequestBodyError(message: String) extends AppError
 
 /**
- *  An error indicating that a database operation failed.
+ *  An error indicating that a service operation failed.
  */
-case class DatabaseError(message: String) extends AppError
+case class ServiceError(message: String) extends AppError

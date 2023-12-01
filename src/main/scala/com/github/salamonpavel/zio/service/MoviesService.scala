@@ -1,6 +1,6 @@
 package com.github.salamonpavel.zio.service
 
-import com.github.salamonpavel.zio.exception.DatabaseError
+import com.github.salamonpavel.zio.exception.{DatabaseError, ServiceError}
 import com.github.salamonpavel.zio.model.Movie
 import com.github.salamonpavel.zio.repository.MoviesRepository
 import zio._
@@ -15,9 +15,9 @@ trait MoviesService {
    *
    *  @param id The ID of the movie.
    *  @return A ZIO effect that requires a MoviesService and produces an Option of Movie.
-   *          The effect may fail with a DatabaseError.
+   *          The effect may fail with a ServiceError.
    */
-  def findMovieById(id: Int): IO[DatabaseError, Option[Movie]]
+  def findMovieById(id: Int): IO[ServiceError, Option[Movie]]
 }
 
 /**
@@ -30,8 +30,10 @@ class MoviesServiceImpl(moviesRepository: MoviesRepository) extends MoviesServic
   /**
    *  Gets a movie by ID.
    */
-  override def findMovieById(id: Int): IO[DatabaseError, Option[Movie]] = {
-    moviesRepository.getMovieById(id)
+  override def findMovieById(id: Int): IO[ServiceError, Option[Movie]] = {
+    moviesRepository.getMovieById(id).mapError { case DatabaseError(message) =>
+      ServiceError(s"Failed to find movie by id: $message")
+    }
   }
 }
 

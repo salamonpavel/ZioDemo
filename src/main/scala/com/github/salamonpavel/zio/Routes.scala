@@ -23,7 +23,8 @@ object Routes {
    *  The routes for movie-related requests.
    */
   private val moviesRoutes = Http.collectZIO[Request] {
-    case GET -> !! / API / V1 / MOVIES / int(id) => MoviesController.findMovieById(id)
+    case GET -> !! / API / V1 / MOVIES / int(id) =>
+      MoviesController.findMovieById(id)
   }
 
   val allRoutes: Http[MoviesController with ActorsController, Nothing, Request, Response] =
