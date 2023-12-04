@@ -1,6 +1,6 @@
 package com.github.salamonpavel.zio.controller
 
-import com.github.salamonpavel.zio.Constants.{FIRST_NAME, LAST_NAME}
+import com.github.salamonpavel.zio.Constants.{FirstName, LastName}
 import com.github.salamonpavel.zio.http.{HttpRequestParser, HttpResponseBuilder}
 import com.github.salamonpavel.zio.model._
 import com.github.salamonpavel.zio.service.ActorsService
@@ -90,8 +90,8 @@ class ActorsControllerImpl(
    */
   override def findActors(request: Request): UIO[Response] = {
     (for {
-      firstName <- httpRequestParser.getOptionalStringParam(request.url.queryParams, FIRST_NAME)
-      lastName  <- httpRequestParser.getOptionalStringParam(request.url.queryParams, LAST_NAME)
+      firstName <- httpRequestParser.getOptionalStringParam(request.url.queryParams, FirstName)
+      lastName  <- httpRequestParser.getOptionalStringParam(request.url.queryParams, LastName)
       actors    <- actorsService.findActors(GetActorsQueryParameters(firstName, lastName))
     } yield actors).fold(
       error => httpResponseBuilder.appErrorToResponse(error),

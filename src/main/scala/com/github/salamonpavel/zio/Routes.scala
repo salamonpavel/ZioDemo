@@ -14,16 +14,21 @@ object Routes {
    *  The routes for actor-related requests.
    */
   private val actorsRoutes = Http.collectZIO[Request] {
-    case GET -> !! / API / V1 / ACTORS / int(id)  => ActorsController.findActorById(id)
-    case request @ GET -> !! / API / V1 / ACTORS  => ActorsController.findActors(request)
-    case request @ POST -> !! / API / V1 / ACTORS => ActorsController.createActor(request)
+    case GET -> !! / Api / V1 / Actors / int(id) =>
+      ActorsController.findActorById(id)
+
+    case request @ GET -> !! / Api / V1 / Actors =>
+      ActorsController.findActors(request)
+
+    case request @ POST -> !! / Api / V1 / Actors =>
+      ActorsController.createActor(request)
   }
 
   /**
    *  The routes for movie-related requests.
    */
-  private val moviesRoutes = Http.collectZIO[Request] {
-    case GET -> !! / API / V1 / MOVIES / int(id) =>
+  private val moviesRoutes = Http.collectZIO[Request] { 
+    case GET -> !! / Api / V1 / Movies / int(id) =>
       MoviesController.findMovieById(id)
   }
 

@@ -9,10 +9,6 @@ import slick.jdbc.{GetResult, PositionedResult}
  */
 trait ActorSlickConverter {
 
-  protected def slickConverter: GetResult[Actor] = {
-    def converter(r: PositionedResult): Actor = {
-      Actor(r.<<, r.<<, r.<<)
-    }
-    GetResult(converter)
-  }
+  protected def slickConverter: GetResult[Actor] = GetResult(r => Actor(r.<<, r.<<, r.<<))
+
 }

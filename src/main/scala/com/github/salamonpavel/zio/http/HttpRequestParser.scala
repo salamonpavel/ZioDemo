@@ -56,13 +56,11 @@ class HttpRequestParserImpl extends HttpRequestParser {
       paramStr <- ZIO
         .fromOption(queryParams.get(param))
         .mapError(_ => ParameterMissingError(s"The required parameter '$param' is missing."))
-        .tapError(error => ZIO.logError(s"Failed to parse required integer parameter due to: ${error.message}"))
       paramInt <- ZIO
         .fromTry(Try(paramStr.asString.toInt))
         .mapError(_ => ParameterFormatError(s"The parameter '$param' is not a valid integer."))
-        .tapError(error => ZIO.logError(s"Failed to parse required integer parameter due to: ${error.message}"))
     } yield paramInt
-  }
+  }.tapError(error => ZIO.logError(s"Failed to parse required integer parameter due to: ${error.message}"))
 
   /**
    *  Parses an optional string parameter.
@@ -78,13 +76,11 @@ class HttpRequestParserImpl extends HttpRequestParser {
     for {
       requestBody <- request.body.asString
         .mapError(error => RequestBodyError(s"The request body is invalid: $error"))
-        .tapError(error => ZIO.logError(s"Failed to parse request body due to: ${error.message}"))
       parsedBody <- ZIO
         .fromEither(Json.parse(requestBody).validate[T].asEither)
         .mapError(error => RequestBodyError(s"The request body could not be parsed: $error"))
-        .tapError(error => ZIO.logError(s"Failed to parse request body due to: ${error.message}"))
     } yield parsedBody
-  }
+  }.tapError(error => ZIO.logError(s"Failed to parse request body due to: ${error.message}"))
 }
 
 object HttpRequestParserImpl {
