@@ -20,7 +20,7 @@ CREATE OR REPLACE FUNCTION runs.create_actor(
     IN  i_last_name            TEXT,
     OUT status                 INTEGER,
     OUT status_text            TEXT,
-    OUT o_actor_id               INTEGER
+    OUT o_actor_id             INTEGER
 ) RETURNS record AS
 $$
 BEGIN

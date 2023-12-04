@@ -104,7 +104,7 @@ object ActorsRepositoryImpl {
   /**
    *  A ZLayer that provides live implementation of ActorsRepository.
    */
-  val live: URLayer[GetActorById with GetActors with CreateActor, ActorsRepositoryImpl] = ZLayer {
+  val live: URLayer[GetActorById with GetActors with CreateActor, ActorsRepository] = ZLayer {
     for {
       getActorByIdFn <- ZIO.service[GetActorById]
       getActorsFn    <- ZIO.service[GetActors]
