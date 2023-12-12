@@ -88,5 +88,5 @@ object HttpRequestParserImpl {
   /**
    *  A ZLayer that provides a live implementation of HttpRequestParser.
    */
-  val live: ULayer[HttpRequestParser] = ZLayer.succeed(new HttpRequestParserImpl)
+  val layer: ULayer[HttpRequestParser] = ZLayer.succeed(new HttpRequestParserImpl)
 }

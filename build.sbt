@@ -33,8 +33,8 @@ libraryDependencies ++= Seq(
   "com.github.tminglei" %% "slick-pg" % "0.20.4", // has to be version 0.20.4
   // zio test
   "dev.zio" %% "zio-test" % zioVersion % Test,
-  "dev.zio" %% "zio-test-sbt" % zioVersion % Test,
-  "dev.zio" %% "zio-test-magnolia" % zioVersion % Test,
+//  "dev.zio" %% "zio-test-sbt" % zioVersion % Test,
+//  "dev.zio" %% "zio-test-magnolia" % zioVersion % Test,
   "dev.zio" %% "zio-test-junit" % zioVersion % Test,
   "com.github.sbt" % "junit-interface" % "0.13.3" % Test,
   // scalatest

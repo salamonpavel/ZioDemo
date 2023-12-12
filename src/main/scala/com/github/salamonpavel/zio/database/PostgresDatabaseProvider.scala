@@ -17,7 +17,7 @@ object PostgresDatabaseProvider {
   /**
    *  A ZLayer that provides live implementation of PostgresDatabaseProvider.
    */
-  val live: ULayer[PostgresDatabaseProvider] = ZLayer.succeed {
+  val layer: ULayer[PostgresDatabaseProvider] = ZLayer.succeed {
     val config: Config = ConfigFactory.load()
     val dbConfig: Config = config.getConfig("postgres")
     val db: Database = Database.forConfig("", dbConfig)

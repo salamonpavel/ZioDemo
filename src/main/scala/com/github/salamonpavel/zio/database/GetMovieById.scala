@@ -35,7 +35,7 @@ object GetMovieById {
   /**
    *  A ZLayer that provides live implementation of GetMovieById.
    */
-  val live: ZLayer[PostgresDatabaseProvider, Nothing, GetMovieById] = ZLayer {
+  val layer: ZLayer[PostgresDatabaseProvider, Nothing, GetMovieById] = ZLayer {
     for {
       dbProvider <- ZIO.service[PostgresDatabaseProvider]
     } yield new GetMovieById()(Runs, dbProvider.dbEngine)

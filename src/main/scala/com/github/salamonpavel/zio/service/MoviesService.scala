@@ -42,7 +42,7 @@ object MoviesServiceImpl {
   /**
    *  A ZLayer that provides live implementation of MoviesService.
    */
-  val live: URLayer[MoviesRepository, MoviesService] = ZLayer {
+  val layer: URLayer[MoviesRepository, MoviesService] = ZLayer {
     for {
       moviesRepository <- ZIO.service[MoviesRepository]
     } yield new MoviesServiceImpl(moviesRepository)

@@ -118,7 +118,7 @@ object ActorsControllerImpl {
   /**
    *  A ZLayer that provides live implementation of ActorsController.
    */
-  val live: URLayer[HttpRequestParser with HttpResponseBuilder with ActorsService, ActorsController] =
+  val layer: URLayer[HttpRequestParser with HttpResponseBuilder with ActorsService, ActorsController] =
     ZLayer {
       for {
         httpRequestParser   <- ZIO.service[HttpRequestParser]

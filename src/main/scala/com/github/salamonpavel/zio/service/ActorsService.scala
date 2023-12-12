@@ -75,7 +75,7 @@ object ActorsServiceImpl {
   /**
    *  A ZLayer that provides a live implementation of ActorsService.
    */
-  val live: URLayer[ActorsRepository, ActorsService] =
+  val layer: URLayer[ActorsRepository, ActorsService] =
     ZLayer {
       for {
         actorsRepository <- ZIO.service[ActorsRepository]

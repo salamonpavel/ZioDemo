@@ -56,7 +56,7 @@ object MoviesControllerImpl {
   /**
    *  A ZLayer that provides live implementation of MoviesController.
    */
-  val live: URLayer[HttpRequestParser with HttpResponseBuilder with MoviesService, MoviesController] = ZLayer {
+  val layer: URLayer[HttpRequestParser with HttpResponseBuilder with MoviesService, MoviesController] = ZLayer {
     for {
       httpResponseBuilder <- ZIO.service[HttpResponseBuilder]
       moviesService       <- ZIO.service[MoviesService]

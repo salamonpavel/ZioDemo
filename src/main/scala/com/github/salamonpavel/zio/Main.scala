@@ -30,19 +30,20 @@ object Main extends ZIOAppDefault {
       .serve(Routes.allRoutes)
       .provide(
         Server.default,
-        HttpRequestParserImpl.live,
-        HttpResponseBuilderImpl.live,
-        ActorsControllerImpl.live,
-        ActorsServiceImpl.live,
-        ActorsRepositoryImpl.live,
-        MoviesControllerImpl.live,
-        MoviesServiceImpl.live,
-        MoviesRepositoryImpl.live,
-        PostgresDatabaseProvider.live,
-        GetActorById.live,
-        GetActors.live,
-        CreateActor.live,
-        GetMovieById.live
+        HttpRequestParserImpl.layer,
+        HttpResponseBuilderImpl.layer,
+        ActorsControllerImpl.layer,
+        ActorsServiceImpl.layer,
+        ActorsRepositoryImpl.layer,
+        MoviesControllerImpl.layer,
+        MoviesServiceImpl.layer,
+        MoviesRepositoryImpl.layer,
+        PostgresDatabaseProvider.layer,
+        GetActorById.layer,
+        GetActors.layer,
+        CreateActor.layer,
+        GetMovieById.layer,
+//        ZLayer.Debug.mermaid
       )
 
   /**

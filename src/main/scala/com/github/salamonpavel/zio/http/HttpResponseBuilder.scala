@@ -96,5 +96,5 @@ object HttpResponseBuilderImpl {
   /**
    *  A ZLayer that provides live implementation of HttpResponseBuilder.
    */
-  val live: ULayer[HttpResponseBuilder] = ZLayer.succeed(new HttpResponseBuilderImpl)
+  val layer: ULayer[HttpResponseBuilder] = ZLayer.succeed(new HttpResponseBuilderImpl)
 }
