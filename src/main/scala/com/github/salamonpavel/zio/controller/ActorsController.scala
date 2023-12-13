@@ -1,6 +1,7 @@
 package com.github.salamonpavel.zio.controller
 
 import com.github.salamonpavel.zio.Constants.{FirstName, LastName}
+import com.github.salamonpavel.zio.exception.ServiceError
 import com.github.salamonpavel.zio.http.{HttpRequestParser, HttpResponseBuilder}
 import com.github.salamonpavel.zio.model._
 import com.github.salamonpavel.zio.service.ActorsService
@@ -20,6 +21,7 @@ trait ActorsController {
    *         The response will contain the actor if it was found, or an error message if an error occurred.
    */
   def findActorById(id: Int): UIO[Response]
+  def findActorById2(id: Int): ZIO[Any, ErrorApiResponse, SingleApiResponse[Actor]]
 
   /**
    *  Finds actors by first name and/or last name.
@@ -47,6 +49,10 @@ object ActorsController {
    */
   def findActorById(id: Int): URIO[ActorsController, Response] = {
     ZIO.serviceWithZIO[ActorsController](_.findActorById(id))
+  }
+
+  def findActorById2(id: Int): ZIO[ActorsController, ErrorApiResponse, SingleApiResponse[Actor]] = {
+    ZIO.serviceWithZIO[ActorsController](_.findActorById2(id))
   }
 
   /**
@@ -85,6 +91,14 @@ class ActorsControllerImpl(
       )
   }
 
+  override def findActorById2(id: Int): ZIO[Any, ErrorApiResponse, SingleApiResponse[Actor]] = {
+    actorsService
+      .findActorById(id)
+      .map(
+        actor => httpResponseBuilder.optionToSingleApiResponse(actor)
+      ).mapError(e => ErrorApiResponse(ApiResponseStatus.InternalServerError, e.message))
+  }
+
   /**
    *  Finds actors by first name and/or last name.
    */
@@ -111,6 +125,8 @@ class ActorsControllerImpl(
         actor => httpResponseBuilder.successPostResponse(actor)
       )
   }
+
+
 }
 
 object ActorsControllerImpl {

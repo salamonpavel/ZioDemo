@@ -2,10 +2,10 @@ package com.github.salamonpavel.zio.database
 
 import com.github.salamonpavel.zio.model.CreateActorRequestBody
 import slick.jdbc.{GetResult, SQLActionBuilder}
-import za.co.absa.fadb.DBFunction._
 import za.co.absa.fadb.DBSchema
 import za.co.absa.fadb.slick.FaDbPostgresProfile.api._
-import za.co.absa.fadb.slick.{SlickFunctionWithStatusSupport, SlickPgEngine}
+import za.co.absa.fadb.slick.SlickFunction.SlickSingleResultFunction
+import za.co.absa.fadb.slick.SlickPgEngine
 import za.co.absa.fadb.status.handling.implementations.StandardStatusHandling
 import zio._
 
@@ -13,9 +13,7 @@ import zio._
  *  A class representing a function to create an actor.
  */
 class CreateActor(implicit override val schema: DBSchema, val dbEngine: SlickPgEngine)
-    extends DBSingleResultFunction[CreateActorRequestBody, Int, SlickPgEngine]
-    with SlickFunctionWithStatusSupport[CreateActorRequestBody, Int]
-    with StandardStatusHandling {
+    extends SlickSingleResultFunction[CreateActorRequestBody, Int] with StandardStatusHandling {
 
   override def fieldsToSelect: Seq[String] = super.fieldsToSelect ++ Seq("o_actor_id")
 

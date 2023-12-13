@@ -1,6 +1,6 @@
 package com.github.salamonpavel.zio.model
 
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.{Json, Reads, Writes}
 
 /**
  *  A case class representing an actor.
@@ -17,4 +17,5 @@ object Actor {
    *  A JSON encoder for the Actor class.
    */
   implicit val writes: Writes[Actor] = Json.writes[Actor]
+  implicit val reads: Reads[Actor] = Json.reads[Actor]
 }

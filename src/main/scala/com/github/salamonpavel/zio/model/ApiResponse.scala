@@ -1,7 +1,7 @@
 package com.github.salamonpavel.zio.model
 
 import com.github.salamonpavel.zio.model.ApiResponseStatus.ApiResponseStatus
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.{Format, Json, Reads, Writes}
 
 /**
  *  A trait that represents an API response.
@@ -22,8 +22,9 @@ case class SingleApiResponse[T](status: ApiResponseStatus, data: T) extends ApiR
 object SingleApiResponse {
 
   /**
-   *  A JSON encoder for the SingleApiResponse class.
+   *  A JSON encoder/decoder for the SingleApiResponse class.
    */
+  implicit def reads[T: Reads]: Reads[SingleApiResponse[T]] = Json.reads[SingleApiResponse[T]]
   implicit def writes[T: Writes]: Writes[SingleApiResponse[T]] = Json.writes[SingleApiResponse[T]]
 }
 
@@ -35,9 +36,10 @@ case class MultiApiResponse[T](status: ApiResponseStatus, data: Seq[T]) extends 
 object MultiApiResponse {
 
   /**
-   *  A JSON encoder for the MultiApiResponse class.
+   *  A JSON encoder/decoder for the MultiApiResponse class.
    */
   implicit def writes[T: Writes]: Writes[MultiApiResponse[T]] = Json.writes[MultiApiResponse[T]]
+  implicit def reads[T: Reads]: Reads[MultiApiResponse[T]] = Json.reads[MultiApiResponse[T]]
 }
 
 /**
@@ -48,7 +50,8 @@ case class ErrorApiResponse(status: ApiResponseStatus, message: String) extends 
 object ErrorApiResponse {
 
   /**
-   *  A JSON encoder for the ErrorApiResponse class.
+   *  A JSON encoder/decoder for the ErrorApiResponse class.
    */
-  implicit val writes: Writes[ErrorApiResponse] = Json.writes[ErrorApiResponse]
+  implicit val reads: Reads[ErrorApiResponse] = Json.reads[ErrorApiResponse]
+  implicit val write: Writes[ErrorApiResponse] = Json.writes[ErrorApiResponse]
 }

@@ -16,6 +16,7 @@ trait HttpResponseBuilder {
    *  @return A Response.
    */
   def optionToResponse[T](option: Option[T])(implicit writes: Writes[T]): Response
+  def optionToSingleApiResponse[T](option: Option[T])(implicit writes: Writes[T]): SingleApiResponse[T]
 
   /**
    *  Converts a Seq of T to a Response.
@@ -39,6 +40,7 @@ trait HttpResponseBuilder {
    *  @return A Response.
    */
   def appErrorToResponse(error: AppError): Response
+  def appErrorToApiResponse(error: AppError): ErrorApiResponse
 }
 
 /**
@@ -57,6 +59,14 @@ class HttpResponseBuilderImpl extends HttpResponseBuilder {
       val errorResponse = ErrorApiResponse(ApiResponseStatus.NotFound, "The requested resource could not be found.")
       Response.json(Json.toJson(errorResponse).toString).setStatus(Status.NotFound)
   }
+
+  override def optionToSingleApiResponse[T](option: Option[T])(implicit writes: Writes[T]): SingleApiResponse[T] =
+    option match {
+      case Some(value) => SingleApiResponse(ApiResponseStatus.Success, value)
+      case None =>
+        println("hello there")
+        ??? //ErrorApiResponse(ApiResponseStatus.NotFound, "The requested resource could not be found.")
+    }
 
   /**
    *  Converts a Seq of T to a Response.
@@ -89,6 +99,18 @@ class HttpResponseBuilderImpl extends HttpResponseBuilder {
     val errorApiResponse = ErrorApiResponse(apiResponseStatus, error.message)
     Response.json(Json.toJson(errorApiResponse).toString).setStatus(status)
   }
+
+  def appErrorToApiResponse(error: AppError): ErrorApiResponse = {
+    error match {
+      case _: ServiceError => ErrorApiResponse(ApiResponseStatus.InternalServerError, error.message)
+      case _: ParameterMissingError  => ErrorApiResponse(ApiResponseStatus.BadRequest, error.message)
+      case _: ParameterFormatError => ErrorApiResponse(ApiResponseStatus.BadRequest, error.message)
+      case _: RequestBodyError => ErrorApiResponse(ApiResponseStatus.BadRequest, error.message)
+      case _ => ErrorApiResponse(ApiResponseStatus.BadRequest, error.message)
+    }
+  }
+
+
 }
 
 object HttpResponseBuilderImpl {

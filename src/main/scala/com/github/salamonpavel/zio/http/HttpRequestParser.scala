@@ -20,7 +20,7 @@ trait HttpRequestParser {
    *  @return A ZIO effect that produces an integer.
    *         The effect may fail with an AppError if the parameter is missing or not a valid integer.
    */
-  def parseRequiredInt(queryParams: QueryParams, param: String): IO[AppError, Int]
+//  def parseRequiredInt(queryParams: QueryParams, param: String): IO[AppError, Int]
 
   /**
    *  Parses the request body into an A.
@@ -48,19 +48,19 @@ class HttpRequestParserImpl extends HttpRequestParser {
   /**
    *  Parses a required string parameter into an integer.
    */
-  override def parseRequiredInt(
-    queryParams: QueryParams,
-    param: String
-  ): IO[AppError, Int] = {
-    for {
-      paramStr <- ZIO
-        .fromOption(queryParams.get(param))
-        .mapError(_ => ParameterMissingError(s"The required parameter '$param' is missing."))
-      paramInt <- ZIO
-        .fromTry(Try(paramStr.asString.toInt))
-        .mapError(_ => ParameterFormatError(s"The parameter '$param' is not a valid integer."))
-    } yield paramInt
-  }.tapError(error => ZIO.logError(s"Failed to parse required integer parameter due to: ${error.message}"))
+//  override def parseRequiredInt(
+//    queryParams: QueryParams,
+//    param: String
+//  ): IO[AppError, Int] = {
+//    for {
+//      paramStr <- ZIO
+//        .fromOption(queryParams.get(param))
+//        .mapError(_ => ParameterMissingError(s"The required parameter '$param' is missing."))
+//      paramInt <- ZIO
+//        .fromTry(Try(paramStr.asString.toInt))
+//        .mapError(_ => ParameterFormatError(s"The parameter '$param' is not a valid integer."))
+//    } yield paramInt
+//  }.tapError(error => ZIO.logError(s"Failed to parse required integer parameter due to: ${error.message}"))
 
   /**
    *  Parses an optional string parameter.
