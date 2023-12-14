@@ -1,16 +1,22 @@
 package com.github.salamonpavel.zio
 
 import com.github.salamonpavel.zio.Constants._
-import com.github.salamonpavel.zio.controller._
 import com.github.salamonpavel.zio.model._
-import sttp.tapir.PublicEndpoint
+import sttp.tapir.{Endpoint, PublicEndpoint, endpoint}
 import sttp.tapir.generic.auto._
 import sttp.tapir.json.play._
 import sttp.tapir.ztapir._
 
-trait ActorsRoutes extends BaseRoutes {
+trait Endpoints {
 
-  // Tapir endpoints
+  // Base endpoints
+  protected val baseEndpoint: Endpoint[Unit, Unit, ErrorApiResponse, Unit, Any] =
+    endpoint.errorOut(jsonBody[ErrorApiResponse])
+
+  protected val apiV1: Endpoint[Unit, Unit, ErrorApiResponse, Unit, Any] =
+    baseEndpoint.in(Api / V1)
+    
+  // Actors endpoints
   protected val getActorByIdEndpoint: PublicEndpoint[Int, ErrorApiResponse, SingleSuccessApiResponse[Actor], Any] =
     apiV1.get
       .name("getActorById")
@@ -33,13 +39,12 @@ trait ActorsRoutes extends BaseRoutes {
       .in(jsonBody[CreateActorRequestBody])
       .out(jsonBody[SingleSuccessApiResponse[Actor]])
 
-  // Server endpoints
-  protected val getActorByIdServerEndpoint: ZServerEndpoint[ActorsController, Any] =
-    getActorByIdEndpoint.zServerLogic(ActorsController.findActorById)
+  // Movies endpoints
+  protected val getMovieByIdEndpoint: PublicEndpoint[Int, ErrorApiResponse, SingleSuccessApiResponse[Movie], Any] =
+    apiV1.get
+      .name("getMovieById")
+      .in(Movies / path[Int](Id))
+      .out(jsonBody[SingleSuccessApiResponse[Movie]])
 
-  protected val getActorsServerEndpoint: ZServerEndpoint[ActorsController, Any] =
-    getActorsEndpoint.zServerLogic(ActorsController.findActors)
 
-  protected val createActorServerEndpoint: ZServerEndpoint[ActorsController, Any] =
-    createActorEndpoint.zServerLogic(ActorsController.createActor)
 }

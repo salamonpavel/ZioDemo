@@ -13,12 +13,13 @@ lazy val zioVersion = "2.0.19"
 lazy val zioConfigVersion = "4.0.0-RC16"
 lazy val faDbVersion = "0.2.0+48-2799189f-SNAPSHOT"
 
+resolvers += Resolver.mavenLocal
 
 libraryDependencies ++= Seq(
+  // cats & cats effect
   "org.typelevel" %% "cats-core" % "2.10.0",
   "org.typelevel" %% "cats-effect" % "3.5.2",
-
-// zio
+  // zio
   "dev.zio" %% "zio" % zioVersion,
   "dev.zio" %% "zio-macros" % zioVersion,
   // tapir with http4s
@@ -47,8 +48,7 @@ libraryDependencies ++= Seq(
 //  "dev.zio" %% "zio-test-magnolia" % zioVersion % Test,
   "dev.zio" %% "zio-test-junit" % zioVersion % Test,
   "com.github.sbt" % "junit-interface" % "0.13.3" % Test,
-  // scalatest
-  "org.scalatest" %% "scalatest" % "3.2.15" % Test,
+  "org.mockito" % "mockito-core" % "3.12.4" % Test
 )
 
 testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")

@@ -13,15 +13,18 @@ import sttp.tapir.ztapir._
 import zio.interop.catz._
 import zio.{RIO, ZIO}
 
-trait Server extends ActorsRoutes with MoviesRoutes {
+trait Server extends Endpoints {
 
   type Env = ActorsController with MoviesController
   type F[A] = RIO[Env, A]
 
-  private def createServerEndpoint[I, E, O](endpoint: PublicEndpoint[I, E, O, Any], logic: I => ZIO[Env, E, O]) =
+  private def createServerEndpoint[I, E, O](
+    endpoint: PublicEndpoint[I, E, O, Any],
+    logic: I => ZIO[Env, E, O]
+  ): ZServerEndpoint[Env, Any] =
     endpoint.zServerLogic(logic).widen[Env]
 
-  // server routes  
+  // server routes
   private def createAllServerRoutes: HttpRoutes[F] = {
     val endpoints = List(
       createServerEndpoint(getActorByIdEndpoint, ActorsController.findActorById),
