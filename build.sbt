@@ -7,36 +7,12 @@ lazy val root = (project in file("."))
     name := "ZioDemo"
   )
 
+scalacOptions += "-Ymacro-annotations"
+
 lazy val zioVersion = "2.0.19"
 lazy val zioConfigVersion = "4.0.0-RC16"
-lazy val faDbVersion = "0.2.0+48-2799189f-SNAPSHOT" // 0.2.0
+lazy val faDbVersion = "0.2.0+48-2799189f-SNAPSHOT"
 
-// to be able to fetch balta from local maven repo
-// you can publish balta to local maven repo by running `sbt publishM2`
-resolvers += Resolver.mavenLocal
-
-// lazy val macros = Seq(
-//   libraryDependencies ++= {
-//     CrossVersion.partialVersion(scalaVersion.value) match {
-//       case Some((2, 11 | 12)) => List(compilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.patch))
-//       case _                  => List()
-//     }
-//   },
-//   scalacOptions ++= {
-//     CrossVersion.partialVersion(scalaVersion.value) match {
-//       case Some((2, y)) if y == 11 => Seq("-Xexperimental")
-//       case Some((2, y)) if y == 13 => Seq("-Ymacro-annotations")
-//       case _                       => Seq.empty[String]
-//     }
-//   },
-//   // remove false alarms about unused implicit definitions in macros
-//   scalacOptions ++= {
-//     CrossVersion.partialVersion(scalaVersion.value) match {
-//       case Some((2, _)) => Seq("-Ywarn-macros:after")
-//       case _            => Seq.empty[String]
-//     }
-//   }
-// )
 
 libraryDependencies ++= Seq(
   "org.typelevel" %% "cats-core" % "2.10.0",
@@ -44,11 +20,9 @@ libraryDependencies ++= Seq(
 
 // zio
   "dev.zio" %% "zio" % zioVersion,
-  // zio http
-  "dev.zio" %% "zio-http" % "0.0.5",
+  "dev.zio" %% "zio-macros" % zioVersion,
   // tapir with http4s
   "com.softwaremill.sttp.tapir" %% "tapir-http4s-server-zio" % "1.9.4",
-//  "com.softwaremill.sttp.tapir" %% "tapir-zio-http-server" % "1.9.5",
   // http4s backend
   "org.http4s" %% "http4s-blaze-server" % "0.23.15",
   // swagger

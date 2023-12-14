@@ -13,7 +13,8 @@ import zio._
  *  A class representing a function to create an actor.
  */
 class CreateActor(implicit override val schema: DBSchema, val dbEngine: SlickPgEngine)
-    extends SlickSingleResultFunction[CreateActorRequestBody, Int] with StandardStatusHandling {
+    extends SlickSingleResultFunction[CreateActorRequestBody, Int]
+    with StandardStatusHandling {
 
   override def fieldsToSelect: Seq[String] = super.fieldsToSelect ++ Seq("o_actor_id")
 

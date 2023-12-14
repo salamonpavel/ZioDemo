@@ -4,10 +4,12 @@ import com.github.salamonpavel.zio.exception.{DatabaseError, ServiceError}
 import com.github.salamonpavel.zio.model.Movie
 import com.github.salamonpavel.zio.repository.MoviesRepository
 import zio._
+import zio.macros.accessible
 
 /**
  *  A trait representing the repository for movies.
  */
+@accessible
 trait MoviesService {
 
   /**

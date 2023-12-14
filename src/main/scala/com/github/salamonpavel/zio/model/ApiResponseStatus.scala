@@ -42,6 +42,10 @@ object ApiResponseStatus extends Enumeration {
   /** The server encountered an unexpected condition that prevented it from fulfilling the request. This could be used for any request that fails due to server-side issues. */
   val InternalServerError = Value("internal_server_error")
 
+  /*
+   *  A JSON encoder/decoder for the ApiResponseStatus enumeration.
+   */
   implicit val apiResponseStatusReads: Reads[model.ApiResponseStatus.Value] = Reads.enumNameReads(ApiResponseStatus)
-  implicit val apiResponseStatusWrites: Writes[model.ApiResponseStatus.Value] = Writes.enumNameWrites[ApiResponseStatus.type]
+  implicit val apiResponseStatusWrites: Writes[model.ApiResponseStatus.Value] =
+    Writes.enumNameWrites[ApiResponseStatus.type]
 }

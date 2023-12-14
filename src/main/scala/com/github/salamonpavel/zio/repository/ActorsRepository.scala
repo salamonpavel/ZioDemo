@@ -4,12 +4,14 @@ import com.github.salamonpavel.zio.database.{CreateActor, GetActorById, GetActor
 import com.github.salamonpavel.zio.exception.DatabaseError
 import com.github.salamonpavel.zio.model.{Actor, CreateActorRequestBody, GetActorsQueryParameters}
 import zio._
+import zio.macros.accessible
 
 import scala.concurrent.ExecutionContext
 
 /**
  *  A trait representing the repository for actors.
  */
+@accessible
 trait ActorsRepository {
 
   /**
