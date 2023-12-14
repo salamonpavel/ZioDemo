@@ -99,6 +99,7 @@ class ActorsRepositoryImpl(getActorByIdFn: GetActorById, getActorsFn: GetActors,
       .mapError(error => DatabaseError(error.getMessage))
       .tapError(error => ZIO.logError(s"Failed to create actor: ${error.message}"))
   }
+
 }
 
 object ActorsRepositoryImpl {

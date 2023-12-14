@@ -1,28 +1,102 @@
 package com.github.salamonpavel.zio.service
 
+import com.github.salamonpavel.zio.exception.{DatabaseError, ServiceError}
+import com.github.salamonpavel.zio.model.{Actor, CreateActorRequestBody, GetActorsQueryParameters}
+import com.github.salamonpavel.zio.repository.ActorsRepository
 import org.junit.runner.RunWith
-import zio.{Ref, Scope}
+import zio._
+import zio.test.Assertion._
 import zio.test._
 import zio.test.junit.ZTestJUnitRunner
 
 @RunWith(classOf[ZTestJUnitRunner])
 class ActorsServiceSpec extends ZIOSpecDefault {
 
-  override def spec: Spec[TestEnvironment with Scope, Any] = suite("first suite") {
-    test("first test") {
-      assert(1)(Assertion.equalTo(1))
+  class ActorsRepositoryForTest extends ActorsRepository {
+
+    override def getActorById(id: Int): IO[DatabaseError, Option[Actor]] = {
+      if (id == 1) ZIO.succeed(Some(Actor(1, "John", "Newman")))
+      else if (id == 2) ZIO.succeed(None)
+      else ZIO.fail(DatabaseError("an error"))
     }
-    test("updating ref") {
-      for {
-        r <- Ref.make(0)
-        _ <- r.update(_ + 1)
-        v <- r.get
-      } yield assertTrue(v == 1)
+
+    override def getActors(requestParameters: GetActorsQueryParameters): IO[DatabaseError, Seq[Actor]] = {
+      requestParameters.firstName match {
+        case Some(value) =>
+          if (value == "John") ZIO.succeed(Seq(Actor(1, "John", "Newman")))
+          else ZIO.succeed(Seq.empty)
+        case None =>
+          ZIO.fail(DatabaseError("an error"))
+      }
+    }
+
+    override def createActor(createActorRequestBody: CreateActorRequestBody): IO[DatabaseError, Actor] = {
+      if (createActorRequestBody.firstName == "John") ZIO.succeed(Actor(1, "John", "Newman"))
+      else ZIO.fail(DatabaseError("an error"))
     }
   }
 
-}
+  private val actorsRepositoryLayer = ZLayer.succeed(new ActorsRepositoryForTest)
 
-// Two flavours of assertions
-// smart assertions - unified for both ordinary values and zio effects
-// classic assertions = assert for ordinary values, assertZIO for zio effects
+  override def spec: Spec[TestEnvironment with Scope, Any] = suite("ActorsService") (
+
+    suite("findActorById") (
+
+      test("returns an expected instance of Actor") {
+        val expectedActor = Actor(1, "John", "Newman")
+        for {
+          actor <- ActorsService.findActorById(1)
+        } yield assertTrue(actor.contains(expectedActor))
+      },
+
+      test("returns an expected None") {
+        val expectedActor = Option.empty[Actor]
+        for {
+          actor <- ActorsService.findActorById(2)
+        } yield assertTrue(actor == expectedActor)
+      },
+
+      test("returns an expected ServiceError") {
+        assertZIO(ActorsService.findActorById(3).exit)(failsWithA[ServiceError])
+      }
+    ),
+
+    suite("getActors") (
+
+      test("returns expected Seq of Actors") {
+        val expectedActors = Seq(Actor(1, "John", "Newman"))
+        for {
+          actors <- ActorsService.findActors(GetActorsQueryParameters(Some("John"), None))
+        } yield assertTrue(actors == expectedActors)
+      },
+
+      test("returns expected empty Seq of Actors") {
+        val expectedActors = Seq.empty[Actor]
+        for {
+          actors <- ActorsService.findActors(GetActorsQueryParameters(Some("William"), None))
+        } yield assertTrue(actors == expectedActors)
+      },
+
+      test("returns an expected ServiceError") {
+        assertZIO(ActorsService.findActors(GetActorsQueryParameters(None, None)).exit)(failsWithA[ServiceError])
+      }
+    ),
+
+    suite("createActor")(
+
+      test("returns an expected instance of Actor") {
+        val expectedActor = Actor(1, "John", "Newman")
+        for {
+          actor <- ActorsService.createActor(CreateActorRequestBody("John", "Newman"))
+        } yield assertTrue(actor == expectedActor)
+      },
+
+      test("returns an expected ServiceError") {
+        assertZIO(ActorsService.createActor(CreateActorRequestBody("William", "Newman")).exit)(failsWithA[ServiceError])
+      }
+
+    )
+
+  ).provide(ActorsServiceImpl.layer, actorsRepositoryLayer)
+
+}
