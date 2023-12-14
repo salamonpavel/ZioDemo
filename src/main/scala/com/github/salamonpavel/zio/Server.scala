@@ -15,7 +15,6 @@ import zio.{RIO, ZIO}
 
 trait Server extends ActorsRoutes with MoviesRoutes {
 
-  // https://softwaremill.community/t/working-with-zio-and-http4s-given-a-non-empty-zio-environment/65
   type Env = ActorsController with MoviesController
   type F[A] = RIO[Env, A]
 
