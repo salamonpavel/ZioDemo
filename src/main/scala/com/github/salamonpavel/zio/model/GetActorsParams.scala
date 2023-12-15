@@ -6,4 +6,4 @@ package com.github.salamonpavel.zio.model
  *  @param firstName The first name of the actor.
  *  @param lastName The last name of the actor.
  */
-case class GetActorsQueryParameters(firstName: Option[String], lastName: Option[String])
+case class GetActorsParams(firstName: Option[String], lastName: Option[String])

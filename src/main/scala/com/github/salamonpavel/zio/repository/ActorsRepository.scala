@@ -2,7 +2,7 @@ package com.github.salamonpavel.zio.repository
 
 import com.github.salamonpavel.zio.database.{CreateActor, GetActorById, GetActors}
 import com.github.salamonpavel.zio.exception.DatabaseError
-import com.github.salamonpavel.zio.model.{Actor, CreateActorRequestBody, GetActorsQueryParameters}
+import com.github.salamonpavel.zio.model.{Actor, CreateActorRequestBody, GetActorsParams}
 import zio._
 import zio.macros.accessible
 
@@ -26,20 +26,20 @@ trait ActorsRepository {
   /**
    *  Gets actors by first name and/or last name.
    *
-   *  @param requestParameters The query parameters to find actors.
+   *  @param params The query parameters to find actors.
    *  @return A ZIO effect that requires an ActorsRepository and produces a sequence of actors.
    *          The effect may fail with a DatabaseError.
    */
-  def getActors(requestParameters: GetActorsQueryParameters): IO[DatabaseError, Seq[Actor]]
+  def getActors(params: GetActorsParams): IO[DatabaseError, Seq[Actor]]
 
   /**
    *  Creates an actor. This is an accessor method that requires an ActorsRepository.
    *
-   *  @param createActorRequestBody The request to create an actor.
+   *  @param requestBody The request to create an actor.
    *  @return A ZIO effect that requires an ActorsRepository and produces an Actor.
    *          The effect may fail with a DatabaseError.
    */
-  def createActor(createActorRequestBody: CreateActorRequestBody): IO[DatabaseError, Actor]
+  def createActor(requestBody: CreateActorRequestBody): IO[DatabaseError, Actor]
 }
 
 /**
@@ -65,20 +65,20 @@ class ActorsRepositoryImpl(getActorByIdFn: GetActorById, getActorsFn: GetActors,
   /**
    *  Gets actors by first name and/or last name.
    */
-  override def getActors(requestParameters: GetActorsQueryParameters): IO[DatabaseError, Seq[Actor]] = {
+  override def getActors(params: GetActorsParams): IO[DatabaseError, Seq[Actor]] = {
     ZIO
-      .fromFuture { implicit ec: ExecutionContext => getActorsFn(requestParameters) }
+      .fromFuture { implicit ec: ExecutionContext => getActorsFn(params) }
       .tap { actors =>
         ZIO.logInfo(
-          s"Retrieved ${actors.size} actor(s) with first name: ${requestParameters.firstName} " +
-            s"and last name: ${requestParameters.lastName}."
+          s"Retrieved ${actors.size} actor(s) with first name: ${params.firstName} " +
+            s"and last name: ${params.lastName}."
         )
       }
       .mapError(error => DatabaseError(error.getMessage))
       .tapError(error =>
         ZIO.logError(
-          s"Failed to retrieve actors with first name: ${requestParameters.firstName} " +
-            s"and last name: ${requestParameters.lastName}: ${error.message}"
+          s"Failed to retrieve actors with first name: ${params.firstName} " +
+            s"and last name: ${params.lastName}: ${error.message}"
         )
       )
   }
@@ -86,10 +86,10 @@ class ActorsRepositoryImpl(getActorByIdFn: GetActorById, getActorsFn: GetActors,
   /**
    *  Creates an actor.
    */
-  override def createActor(createActorRequestBody: CreateActorRequestBody): IO[DatabaseError, Actor] = {
+  override def createActor(requestBody: CreateActorRequestBody): IO[DatabaseError, Actor] = {
     ZIO
-      .fromFuture { implicit ec: ExecutionContext => createActorFn(createActorRequestBody) }
-      .map(id => Actor(id, createActorRequestBody.firstName, createActorRequestBody.lastName))
+      .fromFuture { implicit ec: ExecutionContext => createActorFn(requestBody) }
+      .map(id => Actor(id, requestBody.firstName, requestBody.lastName))
       .tap(actor =>
         ZIO.logInfo(
           s"Created actor with ID ${actor.actorId}, first name: ${actor.firstName}, " +

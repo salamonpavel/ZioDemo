@@ -1,7 +1,7 @@
 package com.github.salamonpavel.zio.service
 
 import com.github.salamonpavel.zio.exception.{DatabaseError, ServiceError}
-import com.github.salamonpavel.zio.model.{Actor, CreateActorRequestBody, GetActorsQueryParameters}
+import com.github.salamonpavel.zio.model.{Actor, CreateActorRequestBody, GetActorsParams}
 import com.github.salamonpavel.zio.repository.ActorsRepository
 import org.junit.runner.RunWith
 import zio._
@@ -20,8 +20,8 @@ class ActorsServiceSpec extends ZIOSpecDefault {
       else ZIO.fail(DatabaseError("an error"))
     }
 
-    override def getActors(requestParameters: GetActorsQueryParameters): IO[DatabaseError, Seq[Actor]] = {
-      requestParameters.firstName match {
+    override def getActors(params: GetActorsParams): IO[DatabaseError, Seq[Actor]] = {
+      params.firstName match {
         case Some(value) =>
           if (value == "John") ZIO.succeed(Seq(Actor(1, "John", "Newman")))
           else ZIO.succeed(Seq.empty)
@@ -30,8 +30,8 @@ class ActorsServiceSpec extends ZIOSpecDefault {
       }
     }
 
-    override def createActor(createActorRequestBody: CreateActorRequestBody): IO[DatabaseError, Actor] = {
-      if (createActorRequestBody.firstName == "John") ZIO.succeed(Actor(1, "John", "Newman"))
+    override def createActor(requestBody: CreateActorRequestBody): IO[DatabaseError, Actor] = {
+      if (requestBody.firstName == "John") ZIO.succeed(Actor(1, "John", "Newman"))
       else ZIO.fail(DatabaseError("an error"))
     }
   }
@@ -66,19 +66,19 @@ class ActorsServiceSpec extends ZIOSpecDefault {
       test("returns expected Seq of Actors") {
         val expectedActors = Seq(Actor(1, "John", "Newman"))
         for {
-          actors <- ActorsService.findActors(GetActorsQueryParameters(Some("John"), None))
+          actors <- ActorsService.findActors(GetActorsParams(Some("John"), None))
         } yield assertTrue(actors == expectedActors)
       },
 
       test("returns expected empty Seq of Actors") {
         val expectedActors = Seq.empty[Actor]
         for {
-          actors <- ActorsService.findActors(GetActorsQueryParameters(Some("William"), None))
+          actors <- ActorsService.findActors(GetActorsParams(Some("William"), None))
         } yield assertTrue(actors == expectedActors)
       },
 
       test("returns an expected ServiceError") {
-        assertZIO(ActorsService.findActors(GetActorsQueryParameters(None, None)).exit)(failsWithA[ServiceError])
+        assertZIO(ActorsService.findActors(GetActorsParams(None, None)).exit)(failsWithA[ServiceError])
       }
     ),
 

@@ -1,7 +1,7 @@
 package com.github.salamonpavel.zio.service
 
 import com.github.salamonpavel.zio.exception.{DatabaseError, ServiceError}
-import com.github.salamonpavel.zio.model.{Actor, CreateActorRequestBody, GetActorsQueryParameters}
+import com.github.salamonpavel.zio.model.{Actor, CreateActorRequestBody, GetActorsParams}
 import com.github.salamonpavel.zio.repository.ActorsRepository
 import zio._
 import zio.macros.accessible
@@ -23,18 +23,18 @@ trait ActorsService {
   /**
    *  Finds actors by first name and/or last name.
    *
-   *  @param requestParameters The query parameters to find actors.
+   *  @param params The query parameters to find actors.
    *  @return A ZIO effect that produces a sequence of actors. The effect may fail with a ServiceError.
    */
-  def findActors(requestParameters: GetActorsQueryParameters): IO[ServiceError, Seq[Actor]]
+  def findActors(params: GetActorsParams): IO[ServiceError, Seq[Actor]]
 
   /**
    *  Creates an actor.
    *
-   *  @param createActorRequestBody The request to create an actor.
+   *  @param requestBody The request to create an actor.
    *  @return A ZIO effect that produces an Actor. The effect may fail with a ServiceError.
    */
-  def createActor(createActorRequestBody: CreateActorRequestBody): IO[ServiceError, Actor]
+  def createActor(requestBody: CreateActorRequestBody): IO[ServiceError, Actor]
 }
 
 /**
@@ -56,8 +56,8 @@ class ActorsServiceImpl(actorsRepository: ActorsRepository) extends ActorsServic
   /**
    *  Finds actors by first name and/or last name.
    */
-  override def findActors(requestParameters: GetActorsQueryParameters): IO[ServiceError, Seq[Actor]] = {
-    actorsRepository.getActors(requestParameters).mapError { case DatabaseError(message) =>
+  override def findActors(params: GetActorsParams): IO[ServiceError, Seq[Actor]] = {
+    actorsRepository.getActors(params).mapError { case DatabaseError(message) =>
       ServiceError(s"Failed to find actors: $message")
     }
   }
@@ -65,8 +65,8 @@ class ActorsServiceImpl(actorsRepository: ActorsRepository) extends ActorsServic
   /**
    *  Creates an actor.
    */
-  override def createActor(createActorRequestBody: CreateActorRequestBody): IO[ServiceError, Actor] = {
-    actorsRepository.createActor(createActorRequestBody).mapError { case DatabaseError(message) =>
+  override def createActor(requestBody: CreateActorRequestBody): IO[ServiceError, Actor] = {
+    actorsRepository.createActor(requestBody).mapError { case DatabaseError(message) =>
       ServiceError(s"Failed to create actor: $message")
     }
   }
