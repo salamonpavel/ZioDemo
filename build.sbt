@@ -27,6 +27,7 @@ libraryDependencies ++= Seq(
   "dev.zio" %% "zio-logging" % "2.1.15",
   // zio config typesafe
   "dev.zio" %% "zio-config" % zioConfigVersion,
+  "dev.zio" %% "zio-config-magnolia" % zioConfigVersion,
   "dev.zio" %% "zio-config-typesafe" % zioConfigVersion,
 
   // tapir with http4s

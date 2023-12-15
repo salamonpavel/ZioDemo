@@ -1,5 +1,6 @@
 package com.github.salamonpavel.zio
 
+import com.github.salamonpavel.zio.config.AppConfig
 import com.github.salamonpavel.zio.controller.{ActorsControllerImpl, MoviesControllerImpl}
 import com.github.salamonpavel.zio.database._
 import com.github.salamonpavel.zio.repository.{ActorsRepositoryImpl, MoviesRepositoryImpl}
@@ -37,6 +38,7 @@ object Main extends ZIOAppDefault with Server {
         GetActors.layer,
         CreateActor.layer,
         GetMovieById.layer,
+        AppConfig.layer,
         ZLayer.Debug.mermaid
       )
 
