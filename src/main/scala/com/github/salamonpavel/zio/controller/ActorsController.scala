@@ -15,28 +15,28 @@ trait ActorsController {
    *  Finds an actor by ID.
    *
    *  @param id The ID of the actor to find.
-   *  @return An IO[ErrorApiResponse, SingleSuccessApiResponse[Actor]] that will produce either an error response or 
+   *  @return An IO[ErrorApiResponse, SingleApiResponse[Actor]] that will produce either an error response or
    *          a single success response containing the actor.
    */
-  def findActorById(id: Int): IO[ErrorApiResponse, SingleSuccessApiResponse[Actor]]
+  def findActorById(id: Int): IO[ErrorApiResponse, SingleApiResponse[Actor]]
 
   /**
    *  Finds actors by first name and/or last name.
    *
    *  @param params The query parameters to use when finding actors.
-   *  @return An IO[ErrorApiResponse, MultiSuccessApiResponse[Actor]] that will produce either an error response or 
+   *  @return An IO[ErrorApiResponse, MultiApiResponse[Actor]] that will produce either an error response or
    *          a multi success response containing the actors.
    */
-  def findActors(params: GetActorsQueryParameters): IO[ErrorApiResponse, MultiSuccessApiResponse[Actor]]
+  def findActors(params: GetActorsParams): IO[ErrorApiResponse, MultiApiResponse[Actor]]
 
   /**
    *  Creates an actor.
    *
    *  @param request The request body to create an actor.
-   *  @return An IO[ErrorApiResponse, SingleSuccessApiResponse[Actor]] that will produce either an error response or 
+   *  @return An IO[ErrorApiResponse, SingleApiResponse[Actor]] that will produce either an error response or
    *          a single success response containing the created actor.
    */
-  def createActor(request: CreateActorRequestBody): IO[ErrorApiResponse, SingleSuccessApiResponse[Actor]]
+  def createActor(request: CreateActorRequestBody): IO[ErrorApiResponse, SingleApiResponse[Actor]]
 }
 
 /**
@@ -47,11 +47,11 @@ class ActorsControllerImpl(actorsService: ActorsService) extends ActorsControlle
   /**
    *  Finds an actor by ID.
    */
-  override def findActorById(id: Int): ZIO[Any, ErrorApiResponse, SingleSuccessApiResponse[Actor]] = {
+  override def findActorById(id: Int): ZIO[Any, ErrorApiResponse, SingleApiResponse[Actor]] = {
     actorsService
       .findActorById(id)
       .flatMap {
-        case Some(actor) => ZIO.succeed(SingleSuccessApiResponse(ApiResponseStatus.Success, actor))
+        case Some(actor) => ZIO.succeed(SingleApiResponse(ApiResponseStatus.Success, actor))
         case None        => ZIO.fail(ErrorApiResponse(ApiResponseStatus.NotFound, s"Actor with id $id not found"))
       }
       .mapError {
@@ -63,12 +63,12 @@ class ActorsControllerImpl(actorsService: ActorsService) extends ActorsControlle
   /**
    *  Finds actors by first name and/or last name.
    */
-  override def findActors(params: GetActorsQueryParameters): IO[ErrorApiResponse, MultiSuccessApiResponse[Actor]] = {
+  override def findActors(params: GetActorsParams): IO[ErrorApiResponse, MultiApiResponse[Actor]] = {
     actorsService
       .findActors(params)
       .foldZIO(
         error => ZIO.fail(ErrorApiResponse(ApiResponseStatus.InternalServerError, error.message)),
-        actors => ZIO.succeed(MultiSuccessApiResponse(ApiResponseStatus.Success, actors))
+        actors => ZIO.succeed(MultiApiResponse(ApiResponseStatus.Success, actors))
       )
   }
 
@@ -76,13 +76,13 @@ class ActorsControllerImpl(actorsService: ActorsService) extends ActorsControlle
    *  Creates an actor.
    */
   override def createActor(
-    request: CreateActorRequestBody
-  ): ZIO[Any, ErrorApiResponse, SingleSuccessApiResponse[Actor]] = {
+    requestBody: CreateActorRequestBody
+  ): ZIO[Any, ErrorApiResponse, SingleApiResponse[Actor]] = {
     actorsService
-      .createActor(request)
+      .createActor(requestBody)
       .foldZIO(
         error => ZIO.fail(ErrorApiResponse(ApiResponseStatus.InternalServerError, error.message)),
-        actor => ZIO.succeed(SingleSuccessApiResponse(ApiResponseStatus.Created, actor))
+        actor => ZIO.succeed(SingleApiResponse(ApiResponseStatus.Created, actor))
       )
   }
 

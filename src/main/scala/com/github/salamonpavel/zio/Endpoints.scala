@@ -10,41 +10,39 @@ import sttp.tapir.ztapir._
 trait Endpoints {
 
   // Base endpoints
-  protected val baseEndpoint: Endpoint[Unit, Unit, ErrorApiResponse, Unit, Any] =
+  private val baseEndpoint: Endpoint[Unit, Unit, ErrorApiResponse, Unit, Any] =
     endpoint.errorOut(jsonBody[ErrorApiResponse])
 
-  protected val apiV1: Endpoint[Unit, Unit, ErrorApiResponse, Unit, Any] =
+  private val apiV1: Endpoint[Unit, Unit, ErrorApiResponse, Unit, Any] =
     baseEndpoint.in(Api / V1)
-    
+
   // Actors endpoints
-  protected val getActorByIdEndpoint: PublicEndpoint[Int, ErrorApiResponse, SingleSuccessApiResponse[Actor], Any] =
+  protected val getActorByIdEndpoint: PublicEndpoint[Int, ErrorApiResponse, SingleApiResponse[Actor], Any] =
     apiV1.get
       .name("getActorById")
       .in(Actors / path[Int](Id))
-      .out(jsonBody[SingleSuccessApiResponse[Actor]])
+      .out(jsonBody[SingleApiResponse[Actor]])
 
-  protected val getActorsEndpoint
-    : PublicEndpoint[GetActorsQueryParameters, ErrorApiResponse, MultiSuccessApiResponse[Actor], Any] =
+  protected val getActorsEndpoint: PublicEndpoint[GetActorsParams, ErrorApiResponse, MultiApiResponse[Actor], Any] =
     apiV1.get
       .name("getActors")
       .in(Actors)
-      .in(query[Option[String]](FirstName).and(query[Option[String]](LastName)).mapTo[GetActorsQueryParameters])
-      .out(jsonBody[MultiSuccessApiResponse[Actor]])
+      .in(query[Option[String]](FirstName).and(query[Option[String]](LastName)).mapTo[GetActorsParams])
+      .out(jsonBody[MultiApiResponse[Actor]])
 
   protected val createActorEndpoint
-    : PublicEndpoint[CreateActorRequestBody, ErrorApiResponse, SingleSuccessApiResponse[Actor], Any] =
+    : PublicEndpoint[CreateActorRequestBody, ErrorApiResponse, SingleApiResponse[Actor], Any] =
     apiV1.post
       .name("createActor")
       .in(Actors)
       .in(jsonBody[CreateActorRequestBody])
-      .out(jsonBody[SingleSuccessApiResponse[Actor]])
+      .out(jsonBody[SingleApiResponse[Actor]])
 
   // Movies endpoints
-  protected val getMovieByIdEndpoint: PublicEndpoint[Int, ErrorApiResponse, SingleSuccessApiResponse[Movie], Any] =
+  protected val getMovieByIdEndpoint: PublicEndpoint[Int, ErrorApiResponse, SingleApiResponse[Movie], Any] =
     apiV1.get
       .name("getMovieById")
       .in(Movies / path[Int](Id))
-      .out(jsonBody[SingleSuccessApiResponse[Movie]])
-
+      .out(jsonBody[SingleApiResponse[Movie]])
 
 }

@@ -2,12 +2,12 @@ package com.github.salamonpavel.zio.repository
 
 import com.github.salamonpavel.zio.database.{CreateActor, GetActorById, GetActors}
 import com.github.salamonpavel.zio.exception.DatabaseError
-import com.github.salamonpavel.zio.model.{Actor, CreateActorRequestBody, GetActorsQueryParameters}
+import com.github.salamonpavel.zio.model.{Actor, CreateActorRequestBody, GetActorsParams}
 import org.junit.runner.RunWith
 import org.mockito.Mockito.{mock, when}
 import zio.test.Assertion.failsWithA
 import zio.test.junit.ZTestJUnitRunner
-import zio.test.{Assertion, Spec, TestEnvironment, ZIOSpecDefault, assertTrue, assertZIO}
+import zio.test.{Spec, TestEnvironment, ZIOSpecDefault, assertTrue, assertZIO}
 import zio.{Scope, ULayer, ZLayer}
 
 import scala.concurrent.Future
@@ -23,9 +23,9 @@ class ActorsRepositorySpec extends ZIOSpecDefault {
   when(getActorByIdMock.apply(2)).thenReturn(Future.successful(None))
   when(getActorByIdMock.apply(3)).thenThrow(new RuntimeException("an error"))
 
-  when(getActorsMock.apply(GetActorsQueryParameters(Some("John"), Some("Newman"))))
+  when(getActorsMock.apply(GetActorsParams(Some("John"), Some("Newman"))))
     .thenReturn(Future.successful(Seq(Actor(1, "John", "Newman"))))
-  when(getActorsMock.apply(GetActorsQueryParameters(None, None)))
+  when(getActorsMock.apply(GetActorsParams(None, None)))
     .thenThrow(new RuntimeException("an error"))
 
   when(createActorMock.apply(CreateActorRequestBody("John", "Newman"))).thenReturn(Future.successful(1))
@@ -63,12 +63,12 @@ class ActorsRepositorySpec extends ZIOSpecDefault {
       test("returns expected Seq of Actors"){
         val expectedActors = Seq(Actor(1, "John", "Newman"))
         for {
-          actors <- ActorsRepository.getActors(GetActorsQueryParameters(Some("John"), Some("Newman")))
+          actors <- ActorsRepository.getActors(GetActorsParams(Some("John"), Some("Newman")))
         } yield assertTrue(actors == expectedActors)
       },
 
       test("returns an expected DatabaseError"){
-        assertZIO(ActorsRepository.getActors(GetActorsQueryParameters(None, None)).exit)(failsWithA[DatabaseError])
+        assertZIO(ActorsRepository.getActors(GetActorsParams(None, None)).exit)(failsWithA[DatabaseError])
       }
     ),
 

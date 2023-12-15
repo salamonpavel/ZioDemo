@@ -1,6 +1,6 @@
 package com.github.salamonpavel.zio.controller
 
-import com.github.salamonpavel.zio.model.{ApiResponseStatus, ErrorApiResponse, Movie, SingleSuccessApiResponse}
+import com.github.salamonpavel.zio.model.{ApiResponseStatus, ErrorApiResponse, Movie, SingleApiResponse}
 import com.github.salamonpavel.zio.service.MoviesService
 import zio._
 import zio.macros.accessible
@@ -15,10 +15,10 @@ trait MoviesController {
    *  Finds a movie by ID.
    *
    *  @param id The ID of the movie to find.
-   *  @return An IO[ErrorApiResponse, SingleSuccessApiResponse[Movie]] that will produce either an error response or 
+   *  @return An IO[ErrorApiResponse, SingleSuccessApiResponse[Movie]] that will produce either an error response or
    *          a single success response containing the movie.
    */
-  def findMovieById(id: Int): IO[ErrorApiResponse, SingleSuccessApiResponse[Movie]]
+  def findMovieById(id: Int): IO[ErrorApiResponse, SingleApiResponse[Movie]]
 }
 
 /**
@@ -29,11 +29,11 @@ class MoviesControllerImpl(moviesService: MoviesService) extends MoviesControlle
   /**
    *  Finds a movie by ID.
    */
-  override def findMovieById(id: Int): IO[ErrorApiResponse, SingleSuccessApiResponse[Movie]] = {
+  override def findMovieById(id: Int): IO[ErrorApiResponse, SingleApiResponse[Movie]] = {
     moviesService
       .findMovieById(id)
       .flatMap {
-        case Some(movie) => ZIO.succeed(SingleSuccessApiResponse(ApiResponseStatus.Success, movie))
+        case Some(movie) => ZIO.succeed(SingleApiResponse(ApiResponseStatus.Success, movie))
         case None        => ZIO.fail(ErrorApiResponse(ApiResponseStatus.NotFound, s"Movie with id $id not found"))
       }
       .mapError {
