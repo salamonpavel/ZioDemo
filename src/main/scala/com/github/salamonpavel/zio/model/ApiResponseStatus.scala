@@ -1,5 +1,8 @@
 package com.github.salamonpavel.zio.model
 
+import com.github.salamonpavel.zio.model
+import play.api.libs.json.{Reads, Writes}
+
 /**
  *  Enumeration for possible statuses in the context of a REST API implementing CRUD operations.
  */
@@ -35,4 +38,14 @@ object ApiResponseStatus extends Enumeration {
 
   /** The request could not be completed due to a conflict with the current state of the resource (e.g., trying to create a resource that already exists). This could be used for POST, PUT, or PATCH requests. */
   val Conflict = Value("conflict")
+
+  /** The server encountered an unexpected condition that prevented it from fulfilling the request. This could be used for any request that fails due to server-side issues. */
+  val InternalServerError = Value("internal_server_error")
+
+  /*
+   *  A JSON encoder/decoder for the ApiResponseStatus enumeration.
+   */
+  implicit val apiResponseStatusReads: Reads[model.ApiResponseStatus.Value] = Reads.enumNameReads(ApiResponseStatus)
+  implicit val apiResponseStatusWrites: Writes[model.ApiResponseStatus.Value] =
+    Writes.enumNameWrites[ApiResponseStatus.type]
 }

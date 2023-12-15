@@ -4,10 +4,12 @@ import com.github.salamonpavel.zio.exception.{DatabaseError, ServiceError}
 import com.github.salamonpavel.zio.model.{Actor, CreateActorRequestBody, GetActorsQueryParameters}
 import com.github.salamonpavel.zio.repository.ActorsRepository
 import zio._
+import zio.macros.accessible
 
 /**
  *  A trait representing the service for actors.
  */
+@accessible
 trait ActorsService {
 
   /**

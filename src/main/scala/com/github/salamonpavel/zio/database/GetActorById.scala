@@ -2,18 +2,17 @@ package com.github.salamonpavel.zio.database
 
 import com.github.salamonpavel.zio.model.Actor
 import slick.jdbc.SQLActionBuilder
-import za.co.absa.fadb.DBFunction._
 import za.co.absa.fadb.DBSchema
 import za.co.absa.fadb.slick.FaDbPostgresProfile.api._
-import za.co.absa.fadb.slick.{SlickFunction, SlickPgEngine}
+import za.co.absa.fadb.slick.SlickFunction.SlickOptionalResultFunction
+import za.co.absa.fadb.slick.SlickPgEngine
 import zio.{ZIO, ZLayer}
 
 /**
  *  A class representing a function to get a movie by ID.
  */
 class GetActorById(implicit override val schema: DBSchema, val dbEngine: SlickPgEngine)
-    extends DBOptionalResultFunction[Int, Actor, SlickPgEngine]
-    with SlickFunction[Int, Actor]
+    extends SlickOptionalResultFunction[Int, Actor]
     with ActorSlickConverter {
 
   override def fieldsToSelect: Seq[String] = super.fieldsToSelect ++ Seq("actor_id", "first_name", "last_name")

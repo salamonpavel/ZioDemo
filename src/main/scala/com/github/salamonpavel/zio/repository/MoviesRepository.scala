@@ -4,12 +4,14 @@ import com.github.salamonpavel.zio.database.GetMovieById
 import com.github.salamonpavel.zio.exception.DatabaseError
 import com.github.salamonpavel.zio.model.Movie
 import zio._
+import zio.macros.accessible
 
 import scala.concurrent.ExecutionContext
 
 /**
  *  A trait representing the repository for movies.
  */
+@accessible
 trait MoviesRepository {
 
   /**

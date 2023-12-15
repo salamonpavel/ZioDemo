@@ -1,6 +1,6 @@
 package com.github.salamonpavel.zio.model
 
-import play.api.libs.json.{Json, Reads}
+import play.api.libs.json.{Json, Reads, Writes}
 
 /**
  *  A class representing a request to create an actor.
@@ -13,7 +13,8 @@ case class CreateActorRequestBody(firstName: String, lastName: String)
 object CreateActorRequestBody {
 
   /**
-   *  A JSON reader for the CreateActorRequestBody class.
+   *  A JSON encoder/decoder for the CreateActorRequestBody class.
    */
   implicit val reads: Reads[CreateActorRequestBody] = Json.reads[CreateActorRequestBody]
+  implicit val writes: Writes[CreateActorRequestBody] = Json.writes[CreateActorRequestBody]
 }

@@ -1,46 +1,57 @@
 ThisBuild / version := "0.1.0-SNAPSHOT"
 
-ThisBuild / scalaVersion := "2.12.18"
+ThisBuild / scalaVersion := "2.13.12"
 
 lazy val root = (project in file("."))
   .settings(
     name := "ZioDemo"
   )
 
+scalacOptions += "-Ymacro-annotations"
+
 lazy val zioVersion = "2.0.19"
 lazy val zioConfigVersion = "4.0.0-RC16"
-lazy val faDbVersion = "0.2.1-local+0-20b28a07+20231128-2139-SNAPSHOT" // 0.2.0
+lazy val faDbVersion = "0.2.0+48-2799189f-SNAPSHOT"
 
-// to be able to fetch balta from local maven repo
-// you can publish balta to local maven repo by running `sbt publishM2`
 resolvers += Resolver.mavenLocal
 
 libraryDependencies ++= Seq(
+  // cats & cats effect
+  "org.typelevel" %% "cats-core" % "2.10.0",
+  "org.typelevel" %% "cats-effect" % "3.5.2",
+
   // zio
   "dev.zio" %% "zio" % zioVersion,
-  // zio http
-  "dev.zio" %% "zio-http" % "0.0.5",
+  "dev.zio" %% "zio-macros" % zioVersion,
   // zio logging
   "dev.zio" %% "zio-logging" % "2.1.15",
-  // play json
-  "com.typesafe.play" %% "play-json" % "2.10.3",
   // zio config typesafe
   "dev.zio" %% "zio-config" % zioConfigVersion,
   "dev.zio" %% "zio-config-typesafe" % zioConfigVersion,
+
+  // tapir with http4s
+  "com.softwaremill.sttp.tapir" %% "tapir-http4s-server-zio" % "1.9.4",
+  // http4s backend
+  "org.http4s" %% "http4s-blaze-server" % "0.23.15",
+  // swagger
+  "com.softwaremill.sttp.tapir" %% "tapir-swagger-ui-bundle" % "1.9.5",
+
+  // play json
+  "com.typesafe.play" %% "play-json" % "2.9.4",
+  "com.softwaremill.sttp.tapir" %% "tapir-json-play" % "1.9.5",
+
   // fa-db & slick & pg dependencies
   "za.co.absa.fa-db" %% "core" % faDbVersion,
   "za.co.absa.fa-db" %% "slick" % faDbVersion,
   "com.github.tminglei" %% "slick-pg" % "0.20.4", // has to be version 0.20.4
-  // zio test
+
+  // zio test and mockito
   "dev.zio" %% "zio-test" % zioVersion % Test,
-//  "dev.zio" %% "zio-test-sbt" % zioVersion % Test,
-//  "dev.zio" %% "zio-test-magnolia" % zioVersion % Test,
+  "dev.zio" %% "zio-test-sbt" % zioVersion % Test,
+  "dev.zio" %% "zio-test-magnolia" % zioVersion % Test,
   "dev.zio" %% "zio-test-junit" % zioVersion % Test,
   "com.github.sbt" % "junit-interface" % "0.13.3" % Test,
-  // scalatest
-  "org.scalatest" %% "scalatest" % "3.2.15" % Test,
-  // balta https://github.com/AbsaOSS/balta
-  "za.co.absa.balta" %% "balta" % "0.1.0-SNAPSHOT" % Test
+  "org.mockito" % "mockito-core" % "3.12.4" % Test
 )
 
 testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
