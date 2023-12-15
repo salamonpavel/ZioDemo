@@ -12,7 +12,7 @@ import zio.test.junit.ZTestJUnitRunner
 @RunWith(classOf[ZTestJUnitRunner])
 class ActorsServiceSpec extends ZIOSpecDefault {
 
-  class ActorsRepositoryForTest extends ActorsRepository {
+  class ActorsRepositoryFake extends ActorsRepository {
 
     override def getActorById(id: Int): IO[DatabaseError, Option[Actor]] = {
       if (id == 1) ZIO.succeed(Some(Actor(1, "John", "Newman")))
@@ -36,7 +36,7 @@ class ActorsServiceSpec extends ZIOSpecDefault {
     }
   }
 
-  private val actorsRepositoryLayer = ZLayer.succeed(new ActorsRepositoryForTest)
+  private val actorsRepositoryLayer = ZLayer.succeed(new ActorsRepositoryFake)
 
   override def spec: Spec[TestEnvironment with Scope, Any] = suite("ActorsService") (
 
