@@ -7,7 +7,7 @@ import org.junit.runner.RunWith
 import org.mockito.Mockito.{mock, when}
 import zio.test.Assertion.failsWithA
 import zio.test.junit.ZTestJUnitRunner
-import zio.test.{Spec, TestEnvironment, ZIOSpecDefault, assertTrue, assertZIO}
+import zio.test.{Assertion, Spec, TestEnvironment, ZIOSpecDefault, assertTrue, assertZIO}
 import zio.{Scope, ULayer, ZLayer}
 
 import scala.concurrent.Future
