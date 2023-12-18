@@ -39,7 +39,7 @@ object Main extends ZIOAppDefault with Server {
         CreateActor.layer,
         GetMovieById.layer,
         AppConfig.layer,
-        ZLayer.Debug.mermaid
+//        ZLayer.Debug.mermaid
       )
 
   /**

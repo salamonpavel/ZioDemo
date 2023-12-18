@@ -18,13 +18,15 @@ trait Endpoints {
 
   // Actors endpoints
   protected val getActorByIdEndpoint: PublicEndpoint[Int, ErrorApiResponse, SingleApiResponse[Actor], Any] =
-    apiV1.get
+    apiV1
+      .get
       .name("getActorById")
       .in(Actors / path[Int](Id))
       .out(jsonBody[SingleApiResponse[Actor]])
 
   protected val getActorsEndpoint: PublicEndpoint[GetActorsParams, ErrorApiResponse, MultiApiResponse[Actor], Any] =
-    apiV1.get
+    apiV1
+      .get
       .name("getActors")
       .in(Actors)
       .in(query[Option[String]](FirstName).and(query[Option[String]](LastName)).mapTo[GetActorsParams])
@@ -32,7 +34,8 @@ trait Endpoints {
 
   protected val createActorEndpoint
     : PublicEndpoint[CreateActorRequestBody, ErrorApiResponse, SingleApiResponse[Actor], Any] =
-    apiV1.post
+    apiV1
+      .post
       .name("createActor")
       .in(Actors)
       .in(jsonBody[CreateActorRequestBody])
@@ -40,7 +43,8 @@ trait Endpoints {
 
   // Movies endpoints
   protected val getMovieByIdEndpoint: PublicEndpoint[Int, ErrorApiResponse, SingleApiResponse[Movie], Any] =
-    apiV1.get
+    apiV1
+      .get
       .name("getMovieById")
       .in(Movies / path[Int](Id))
       .out(jsonBody[SingleApiResponse[Movie]])
