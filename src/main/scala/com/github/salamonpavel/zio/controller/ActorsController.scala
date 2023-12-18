@@ -39,6 +39,12 @@ trait ActorsController {
   def createActor(requestBody: CreateActorRequestBody): IO[ErrorApiResponse, SingleApiResponse[Actor]]
 }
 
+//object ActorsController {
+//  // accessor methods
+//  def findActorById(id: Int): ZIO[ActorsController, ErrorApiResponse, SingleApiResponse[Actor]] =
+//    ZIO.serviceWithZIO[ActorsController](_.findActorById(id))
+//}
+
 /**
  *  An implementation of the ActorsController trait.
  */
