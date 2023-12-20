@@ -10,7 +10,7 @@ case class PostgresConfig(
   databaseName: String,
   user: String,
   password: String,
-  numThreads: Int
+  maxPoolSize: Int
 )
 
 object PostgresConfig {

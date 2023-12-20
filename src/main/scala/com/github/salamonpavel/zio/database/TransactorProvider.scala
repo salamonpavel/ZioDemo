@@ -3,7 +3,7 @@ package com.github.salamonpavel.zio.database
 import com.github.salamonpavel.zio.config.PostgresConfig
 import com.zaxxer.hikari.HikariConfig
 import doobie.hikari.HikariTransactor
-import doobie.util.ExecutionContexts
+import zio.Runtime.defaultBlockingExecutor
 import zio._
 import zio.interop.catz._
 
@@ -12,7 +12,6 @@ object TransactorProvider {
   val layer: ZLayer[Any with Scope, Throwable, HikariTransactor[Task]] = ZLayer {
     for {
       postgresConfig <- ZIO.config[PostgresConfig](PostgresConfig.config)
-      ec             <- ExecutionContexts.fixedThreadPool[Task](postgresConfig.numThreads).toScopedZIO
       hikariConfig = {
         val config = new HikariConfig()
         config.setDriverClassName(postgresConfig.dataSourceClass)
@@ -21,10 +20,11 @@ object TransactorProvider {
         )
         config.setUsername(postgresConfig.user)
         config.setPassword(postgresConfig.password)
+        config.setMaximumPoolSize(postgresConfig.maxPoolSize)
         config
       }
 
-      xa <- HikariTransactor.fromHikariConfig[Task](hikariConfig, ec).toScopedZIO
+      xa <- HikariTransactor.fromHikariConfig[Task](hikariConfig, defaultBlockingExecutor.asExecutionContext).toScopedZIO
     } yield xa
   }
 }
