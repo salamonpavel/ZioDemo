@@ -4,9 +4,12 @@ import zio.Config
 import zio.config.magnolia.deriveConfig
 
 case class PostgresConfig(
-  connectionPool: String,
   dataSourceClass: String,
-  properties: PostgresProperties,
+  serverName: String,
+  portNumber: Int,
+  databaseName: String,
+  user: String,
+  password: String,
   numThreads: Int
 )
 

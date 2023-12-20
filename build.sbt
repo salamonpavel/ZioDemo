@@ -11,7 +11,7 @@ scalacOptions += "-Ymacro-annotations"
 
 lazy val zioVersion = "2.0.19"
 lazy val zioConfigVersion = "4.0.0-RC16"
-lazy val faDbVersion = "0.2.0+48-2799189f-SNAPSHOT"
+lazy val faDbVersion = "0.2.0+50-e3c6e7f6+20231220-1542-SNAPSHOT"
 
 resolvers += Resolver.mavenLocal
 
@@ -43,9 +43,7 @@ libraryDependencies ++= Seq(
 
   // fa-db & slick & pg dependencies
   "za.co.absa.fa-db" %% "core" % faDbVersion,
-//  "za.co.absa.fa-db" %% "slick" % faDbVersion,
   "za.co.absa.fa-db" %% "doobie" % faDbVersion,
-//  "com.github.tminglei" %% "slick-pg" % "0.20.4", // has to be version 0.20.4
 
   // zio test and mockito
   "dev.zio" %% "zio-test" % zioVersion % Test,

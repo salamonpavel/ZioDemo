@@ -1,6 +1,5 @@
 package com.github.salamonpavel.zio
 
-import com.github.salamonpavel.zio.config.AppConfig
 import com.github.salamonpavel.zio.controller.{ActorsControllerImpl, MoviesControllerImpl}
 import com.github.salamonpavel.zio.database._
 import com.github.salamonpavel.zio.repository.{ActorsRepositoryImpl, MoviesRepositoryImpl}
@@ -26,19 +25,21 @@ object Main extends ZIOAppDefault with Server {
    */
   override def run: ZIO[Any, Throwable, Unit] =
     server
-      .provide(
-        ActorsControllerImpl.layer,
-        MoviesControllerImpl.layer,
-        ActorsServiceImpl.layer,
-        MoviesServiceImpl.layer,
-        ActorsRepositoryImpl.layer,
-        MoviesRepositoryImpl.layer,
-        PostgresDatabaseProvider.layer,
-        GetActorById.layer,
-        GetActors.layer,
-        CreateActor.layer,
-        GetMovieById.layer,
-      )
+        .provide(
+          ActorsControllerImpl.layer,
+          MoviesControllerImpl.layer,
+          ActorsServiceImpl.layer,
+          MoviesServiceImpl.layer,
+          ActorsRepositoryImpl.layer,
+          MoviesRepositoryImpl.layer,
+          PostgresDatabaseProvider.layer,
+          GetActorById.layer,
+          GetActors.layer,
+          CreateActor.layer,
+          GetMovieById.layer,
+          TransactorProvider.layer,
+          zio.Scope.default
+        )
 
   /**
    *  The bootstrap layer of the application.
