@@ -10,7 +10,7 @@ import zio.interop.catz._
 object TransactorProvider {
 
   val layer: ZLayer[Any with Scope, Throwable, HikariTransactor[Task]] = ZLayer {
-    val transactor = for {
+    for {
       postgresConfig <- ZIO.config[PostgresConfig](PostgresConfig.config)
       ec             <- ExecutionContexts.fixedThreadPool[Task](postgresConfig.numThreads).toScopedZIO
       hikariConfig = {
@@ -26,7 +26,5 @@ object TransactorProvider {
 
       xa <- HikariTransactor.fromHikariConfig[Task](hikariConfig, ec).toScopedZIO
     } yield xa
-
-    transactor
   }
 }
