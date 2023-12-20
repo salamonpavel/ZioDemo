@@ -6,8 +6,6 @@ import com.github.salamonpavel.zio.model.{Actor, CreateActorRequestBody, GetActo
 import zio._
 import zio.macros.accessible
 
-import scala.concurrent.ExecutionContext
-
 /**
  *  A trait representing the repository for actors.
  */
