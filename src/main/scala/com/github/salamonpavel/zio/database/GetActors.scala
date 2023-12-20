@@ -1,25 +1,23 @@
 package com.github.salamonpavel.zio.database
 
 import com.github.salamonpavel.zio.model.{Actor, GetActorsParams}
-import slick.jdbc.SQLActionBuilder
+import doobie.implicits.toSqlInterpolator
+import doobie.util.Read
+import doobie.util.fragment.Fragment
 import za.co.absa.fadb.DBSchema
-import za.co.absa.fadb.slick.FaDbPostgresProfile.api._
-import za.co.absa.fadb.slick.SlickFunction.SlickMultipleResultFunction
-import za.co.absa.fadb.slick.SlickPgEngine
-import zio.{ZIO, ZLayer}
+import za.co.absa.fadb.doobiedb.DoobieEngine
+import za.co.absa.fadb.doobiedb.DoobieFunction.DoobieMultipleResultFunction
+import zio._
+import zio.interop.catz._
 
 /**
  *  A class representing a function to get a movie by ID.
  */
-class GetActors(implicit override val schema: DBSchema, val dbEngine: SlickPgEngine)
-    extends SlickMultipleResultFunction[GetActorsParams, Actor]
-    with ActorSlickConverter {
+class GetActors(implicit override val schema: DBSchema, override val dbEngine: DoobieEngine[Task])
+    extends DoobieMultipleResultFunction[GetActorsParams, Actor, Task] {
 
-  override def fieldsToSelect: Seq[String] = super.fieldsToSelect ++ Seq("actor_id", "first_name", "last_name")
-
-  override protected def sql(values: GetActorsParams): SQLActionBuilder = {
-    sql"""SELECT #$selectEntry FROM #$functionName(${values.firstName},${values.lastName}) #$alias;"""
-  }
+  override def sql(values: GetActorsParams)(implicit read: Read[Actor]): Fragment =
+    sql"SELECT actor_id, first_name, last_name FROM ${Fragment.const(functionName)}(${values.firstName}, ${values.lastName})"
 }
 
 object GetActors {

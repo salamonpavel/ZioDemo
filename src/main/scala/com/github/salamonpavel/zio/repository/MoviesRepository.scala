@@ -33,8 +33,7 @@ class MoviesRepositoryImpl(getMovieByIdFn: GetMovieById) extends MoviesRepositor
    *  Gets a movie by ID.
    */
   override def getMovieById(id: Int): IO[DatabaseError, Option[Movie]] = {
-    ZIO
-      .fromFuture { implicit ec: ExecutionContext => getMovieByIdFn(id) }
+    getMovieByIdFn(id)
       .tap {
         case Some(movie) => ZIO.logInfo(s"Retrieved movie with ID $id: $movie")
         case None        => ZIO.logInfo(s"Movie with ID $id not found.")

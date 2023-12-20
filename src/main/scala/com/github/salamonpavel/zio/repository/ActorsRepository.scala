@@ -46,14 +46,13 @@ trait ActorsRepository {
  *  An implementation of the ActorsRepository trait.
  */
 class ActorsRepositoryImpl(getActorByIdFn: GetActorById, getActorsFn: GetActors, createActorFn: CreateActor)
-    extends ActorsRepository {
+  extends ActorsRepository {
 
   /**
    *  Gets an actor by ID.
    */
   override def getActorById(id: Int): IO[DatabaseError, Option[Actor]] = {
-    ZIO
-      .fromFuture { implicit ec: ExecutionContext => getActorByIdFn(id) }
+    getActorByIdFn(id)
       .tap {
         case Some(actor) => ZIO.logInfo(s"Retrieved actor with ID $id: $actor")
         case None        => ZIO.logInfo(s"Actor with ID $id not found.")
@@ -66,8 +65,7 @@ class ActorsRepositoryImpl(getActorByIdFn: GetActorById, getActorsFn: GetActors,
    *  Gets actors by first name and/or last name.
    */
   override def getActors(params: GetActorsParams): IO[DatabaseError, Seq[Actor]] = {
-    ZIO
-      .fromFuture { implicit ec: ExecutionContext => getActorsFn(params) }
+    getActorsFn(params)
       .tap { actors =>
         ZIO.logInfo(
           s"Retrieved ${actors.size} actor(s) with first name: ${params.firstName} " +
@@ -87,8 +85,7 @@ class ActorsRepositoryImpl(getActorByIdFn: GetActorById, getActorsFn: GetActors,
    *  Creates an actor.
    */
   override def createActor(requestBody: CreateActorRequestBody): IO[DatabaseError, Actor] = {
-    ZIO
-      .fromFuture { implicit ec: ExecutionContext => createActorFn(requestBody) }
+    createActorFn(requestBody)
       .map(id => Actor(id, requestBody.firstName, requestBody.lastName))
       .tap(actor =>
         ZIO.logInfo(

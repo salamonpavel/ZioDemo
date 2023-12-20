@@ -43,8 +43,9 @@ libraryDependencies ++= Seq(
 
   // fa-db & slick & pg dependencies
   "za.co.absa.fa-db" %% "core" % faDbVersion,
-  "za.co.absa.fa-db" %% "slick" % faDbVersion,
-  "com.github.tminglei" %% "slick-pg" % "0.20.4", // has to be version 0.20.4
+//  "za.co.absa.fa-db" %% "slick" % faDbVersion,
+  "za.co.absa.fa-db" %% "doobie" % faDbVersion,
+//  "com.github.tminglei" %% "slick-pg" % "0.20.4", // has to be version 0.20.4
 
   // zio test and mockito
   "dev.zio" %% "zio-test" % zioVersion % Test,
