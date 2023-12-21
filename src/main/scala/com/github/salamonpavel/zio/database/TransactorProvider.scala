@@ -23,7 +23,6 @@ object TransactorProvider {
         config.setMaximumPoolSize(postgresConfig.maxPoolSize)
         config
       }
-
       xa <- HikariTransactor.fromHikariConfig[Task](hikariConfig, defaultBlockingExecutor.asExecutionContext).toScopedZIO
     } yield xa
   }

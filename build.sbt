@@ -42,7 +42,6 @@ libraryDependencies ++= Seq(
   "com.softwaremill.sttp.tapir" %% "tapir-json-play" % "1.9.5",
 
   // fa-db & slick & pg dependencies
-  "za.co.absa.fa-db" %% "core" % faDbVersion,
   "za.co.absa.fa-db" %% "doobie" % faDbVersion,
 
   // zio test and mockito
