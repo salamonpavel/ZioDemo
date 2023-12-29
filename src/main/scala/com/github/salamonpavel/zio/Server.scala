@@ -32,16 +32,11 @@ trait Server extends Endpoints {
       monad.unit(
         respond(ctx).map { case (sc, hs) =>
           val message = ctx.failure match {
-            case DecodeResult.Missing =>
-              s"Decoding error - missing value."
-            case DecodeResult.Multiple(vs) =>
-              s"Decoding error - $vs."
-            case DecodeResult.Error(original, _) =>
-              s"Decoding error for an input value '$original'."
-            case DecodeResult.Mismatch(_, actual) =>
-              s"Unexpected value '$actual'."
-            case DecodeResult.InvalidValue(errors) =>
-              s"Validation error - $errors."
+            case DecodeResult.Missing              => s"Decoding error - missing value."
+            case DecodeResult.Multiple(vs)         => s"Decoding error - $vs."
+            case DecodeResult.Error(original, _)   => s"Decoding error for an input value '$original'."
+            case DecodeResult.Mismatch(_, actual)  => s"Unexpected value '$actual'."
+            case DecodeResult.InvalidValue(errors) => s"Validation error - $errors."
           }
           val errorResponse = ErrorApiResponse(ApiResponseStatus.BadRequest, message)
           ValuedEndpointOutput(statusCode.and(headers).and(jsonBody[ErrorApiResponse]), (sc, hs, errorResponse))
