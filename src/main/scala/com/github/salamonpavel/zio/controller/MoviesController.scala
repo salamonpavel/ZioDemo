@@ -1,5 +1,6 @@
 package com.github.salamonpavel.zio.controller
 
+import com.github.salamonpavel.zio.exception.ServiceError
 import com.github.salamonpavel.zio.model.{ApiResponseStatus, ErrorApiResponse, Movie, SingleApiResponse}
 import com.github.salamonpavel.zio.service.MoviesService
 import zio._
@@ -32,13 +33,12 @@ class MoviesControllerImpl(moviesService: MoviesService) extends MoviesControlle
   override def findMovieById(id: Int): IO[ErrorApiResponse, SingleApiResponse[Movie]] = {
     moviesService
       .findMovieById(id)
+      .mapError { serviceError: ServiceError =>
+        ErrorApiResponse(ApiResponseStatus.InternalServerError, serviceError.getMessage)
+      }
       .flatMap {
         case Some(movie) => ZIO.succeed(SingleApiResponse(ApiResponseStatus.Success, movie))
         case None        => ZIO.fail(ErrorApiResponse(ApiResponseStatus.NotFound, s"Movie with id $id not found"))
-      }
-      .mapError {
-        case apiResponse: ErrorApiResponse => apiResponse
-        case error: Throwable              => ErrorApiResponse(ApiResponseStatus.InternalServerError, error.getMessage)
       }
   }
 }

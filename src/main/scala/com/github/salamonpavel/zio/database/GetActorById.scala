@@ -14,7 +14,7 @@ import zio.interop.catz._
  *  A class representing a function to get a movie by ID.
  */
 class GetActorById(implicit schema: DBSchema, dbEngine: DoobieEngine[Task])
-  extends DoobieOptionalResultFunction[Int, Actor, Task] {
+    extends DoobieOptionalResultFunction[Int, Actor, Task] {
 
   override def sql(values: Int)(implicit read: Read[Actor]): Fragment =
     sql"SELECT actor_id, first_name, last_name FROM ${Fragment.const(functionName)}($values)"

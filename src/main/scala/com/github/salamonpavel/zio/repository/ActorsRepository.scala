@@ -44,7 +44,7 @@ trait ActorsRepository {
  *  An implementation of the ActorsRepository trait.
  */
 class ActorsRepositoryImpl(getActorByIdFn: GetActorById, getActorsFn: GetActors, createActorFn: CreateActor)
-  extends ActorsRepository {
+    extends ActorsRepository {
 
   /**
    *  Gets an actor by ID.

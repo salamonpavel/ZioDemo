@@ -1,5 +1,6 @@
 package com.github.salamonpavel.zio.controller
 
+import com.github.salamonpavel.zio.exception.ServiceError
 import com.github.salamonpavel.zio.model._
 import com.github.salamonpavel.zio.service.ActorsService
 import zio._
@@ -39,12 +40,6 @@ trait ActorsController {
   def createActor(requestBody: CreateActorRequestBody): IO[ErrorApiResponse, SingleApiResponse[Actor]]
 }
 
-//object ActorsController {
-//  // accessor methods
-//  def findActorById(id: Int): ZIO[ActorsController, ErrorApiResponse, SingleApiResponse[Actor]] =
-//    ZIO.serviceWithZIO[ActorsController](_.findActorById(id))
-//}
-
 /**
  *  An implementation of the ActorsController trait.
  */
@@ -56,13 +51,12 @@ class ActorsControllerImpl(actorsService: ActorsService) extends ActorsControlle
   override def findActorById(id: Int): ZIO[Any, ErrorApiResponse, SingleApiResponse[Actor]] = {
     actorsService
       .findActorById(id)
+      .mapError { serviceError: ServiceError =>
+        ErrorApiResponse(ApiResponseStatus.InternalServerError, serviceError.message)
+      }
       .flatMap {
         case Some(actor) => ZIO.succeed(SingleApiResponse(ApiResponseStatus.Success, actor))
         case None        => ZIO.fail(ErrorApiResponse(ApiResponseStatus.NotFound, s"Actor with id $id not found"))
-      }
-      .mapError {
-        case apiResponse: ErrorApiResponse => apiResponse
-        case error: Throwable              => ErrorApiResponse(ApiResponseStatus.InternalServerError, error.getMessage)
       }
   }
 

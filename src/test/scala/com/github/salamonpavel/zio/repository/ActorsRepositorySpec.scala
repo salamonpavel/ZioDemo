@@ -8,7 +8,7 @@ import org.mockito.Mockito.{mock, when}
 import zio.test.Assertion.failsWithA
 import zio.test.junit.ZTestJUnitRunner
 import zio.test.{Spec, TestEnvironment, ZIOSpecDefault, assertTrue, assertZIO}
-import zio.{Scope, ULayer, ZLayer}
+import zio.{Scope, ULayer, ZIO, ZLayer}
 
 import scala.concurrent.Future
 
@@ -19,17 +19,17 @@ class ActorsRepositorySpec extends ZIOSpecDefault {
   private val getActorsMock: GetActors = mock(classOf[GetActors])
   private val createActorMock: CreateActor = mock(classOf[CreateActor])
 
-  when(getActorByIdMock.apply(1)).thenReturn(Future.successful(Some(Actor(1, "John", "Newman"))))
-  when(getActorByIdMock.apply(2)).thenReturn(Future.successful(None))
-  when(getActorByIdMock.apply(3)).thenThrow(new RuntimeException("an error"))
+  when(getActorByIdMock.apply(1)).thenReturn(ZIO.some(Actor(1, "John", "Newman")))
+  when(getActorByIdMock.apply(2)).thenReturn(ZIO.none)
+  when(getActorByIdMock.apply(3)).thenReturn(ZIO.fail(new RuntimeException("an error")))
 
   when(getActorsMock.apply(GetActorsParams(Some("John"), Some("Newman"))))
-    .thenReturn(Future.successful(Seq(Actor(1, "John", "Newman"))))
+    .thenReturn(ZIO.succeed(Seq(Actor(1, "John", "Newman"))))
   when(getActorsMock.apply(GetActorsParams(None, None)))
-    .thenThrow(new RuntimeException("an error"))
+    .thenReturn(ZIO.fail(new RuntimeException("an error")))
 
-  when(createActorMock.apply(CreateActorRequestBody("John", "Newman"))).thenReturn(Future.successful(1))
-  when(createActorMock.apply(CreateActorRequestBody("John", "Doe"))).thenThrow(new RuntimeException("an error"))
+  when(createActorMock.apply(CreateActorRequestBody("John", "Newman"))).thenReturn(ZIO.succeed(1))
+  when(createActorMock.apply(CreateActorRequestBody("John", "Doe"))).thenReturn(ZIO.fail(new RuntimeException("an error")))
 
   private val getActorByIdLayer: ULayer[GetActorById] = ZLayer.succeed(getActorByIdMock)
   private val getActorsLayer: ULayer[GetActors] = ZLayer.succeed(getActorsMock)

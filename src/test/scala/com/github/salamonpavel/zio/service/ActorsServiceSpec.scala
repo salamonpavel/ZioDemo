@@ -15,8 +15,8 @@ class ActorsServiceSpec extends ZIOSpecDefault {
   class ActorsRepositoryFake extends ActorsRepository {
 
     override def getActorById(id: Int): IO[DatabaseError, Option[Actor]] = {
-      if (id == 1) ZIO.succeed(Some(Actor(1, "John", "Newman")))
-      else if (id == 2) ZIO.succeed(None)
+      if (id == 1) ZIO.some(Actor(1, "John", "Newman"))
+      else if (id == 2) ZIO.none
       else ZIO.fail(DatabaseError("an error"))
     }
 

@@ -25,21 +25,21 @@ object Main extends ZIOAppDefault with Server {
    */
   override def run: ZIO[Any, Throwable, Unit] =
     server
-        .provide(
-          ActorsControllerImpl.layer,
-          MoviesControllerImpl.layer,
-          ActorsServiceImpl.layer,
-          MoviesServiceImpl.layer,
-          ActorsRepositoryImpl.layer,
-          MoviesRepositoryImpl.layer,
-          PostgresDatabaseProvider.layer,
-          GetActorById.layer,
-          GetActors.layer,
-          CreateActor.layer,
-          GetMovieById.layer,
-          TransactorProvider.layer,
-          zio.Scope.default
-        )
+      .provide(
+        ActorsControllerImpl.layer,
+        MoviesControllerImpl.layer,
+        ActorsServiceImpl.layer,
+        MoviesServiceImpl.layer,
+        ActorsRepositoryImpl.layer,
+        MoviesRepositoryImpl.layer,
+        PostgresDatabaseProvider.layer,
+        GetActorById.layer,
+        GetActors.layer,
+        CreateActor.layer,
+        GetMovieById.layer,
+        TransactorProvider.layer,
+        zio.Scope.default
+      )
 
   /**
    *  The bootstrap layer of the application.
