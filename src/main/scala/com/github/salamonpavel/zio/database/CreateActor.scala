@@ -5,8 +5,8 @@ import doobie.implicits.toSqlInterpolator
 import doobie.util.Read
 import doobie.util.fragment.Fragment
 import za.co.absa.fadb.DBSchema
-import za.co.absa.fadb.doobiedb.DoobieEngine
-import za.co.absa.fadb.doobiedb.DoobieFunction.DoobieSingleResultFunction
+import za.co.absa.fadb.doobie.DoobieEngine
+import za.co.absa.fadb.doobie.DoobieFunction.DoobieSingleResultFunction
 import zio._
 import zio.interop.catz._
 

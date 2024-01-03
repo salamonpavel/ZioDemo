@@ -11,7 +11,7 @@ scalacOptions += "-Ymacro-annotations"
 
 lazy val zioVersion = "2.0.19"
 lazy val zioConfigVersion = "4.0.0-RC16"
-lazy val faDbVersion = "0.2.0+50-e3c6e7f6+20231220-1542-SNAPSHOT"
+lazy val faDbVersion = "0.3.0"
 
 resolvers += Resolver.mavenLocal
 

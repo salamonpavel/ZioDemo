@@ -6,7 +6,7 @@ import play.api.libs.json.{Json, Reads, Writes}
 /**
  *  A trait that represents an unsuccessful API response containing an error message.
  */
-case class ErrorApiResponse(status: ApiResponseStatus, message: String)
+case class ErrorApiResponse(status: ApiResponseStatus, message: String) extends Throwable
 
 object ErrorApiResponse {
 

@@ -1,7 +1,7 @@
 package com.github.salamonpavel.zio.database
 
 import doobie.Transactor
-import za.co.absa.fadb.doobiedb.DoobieEngine
+import za.co.absa.fadb.doobie.DoobieEngine
 import zio._
 import zio.interop.catz._
 

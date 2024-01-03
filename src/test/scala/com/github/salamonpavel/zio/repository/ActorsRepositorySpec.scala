@@ -10,8 +10,6 @@ import zio.test.junit.ZTestJUnitRunner
 import zio.test.{Spec, TestEnvironment, ZIOSpecDefault, assertTrue, assertZIO}
 import zio.{Scope, ULayer, ZIO, ZLayer}
 
-import scala.concurrent.Future
-
 @RunWith(classOf[ZTestJUnitRunner])
 class ActorsRepositorySpec extends ZIOSpecDefault {
 
