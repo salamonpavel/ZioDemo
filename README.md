@@ -6,10 +6,11 @@ This application is a simple REST API built with ZIO framework in Scala. The app
 
 ```bash
 # start docker container
-docker run --name some-postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=testdb -p 5432:5432 -d postgres:latest
+# default postgres port on localhost is 5432, so we map to 5433 in order to avoid conflicts
+docker run -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=testdb -p 5433:5432 -d postgres:latest 
 
 # perform database migration
-export DATABASE_URL=postgres://postgres:postgres@localhost:5432/testdb
+export DATABASE_URL=postgres://postgres:postgres@localhost:5433/testdb
 sbt flywayMigrate
 
 # execute tests

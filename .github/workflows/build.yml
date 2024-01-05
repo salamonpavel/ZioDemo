@@ -19,7 +19,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
         ports:
-          - 5432:5432
+          - 5433:5432 # default postgres port on localhost is 5432, so we map to 5433 in order to avoid conflicts
 
     steps:
       - name: just echo

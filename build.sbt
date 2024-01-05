@@ -10,7 +10,7 @@ lazy val root = (project in file("."))
 
 scalacOptions += "-Ymacro-annotations"
 
-flywayUrl := "jdbc:postgresql://localhost:5432/testdb"
+flywayUrl := "jdbc:postgresql://localhost:5433/testdb"
 flywayUser := "postgres"
 flywayPassword := "postgres"
 flywayLocations := Seq("filesystem:database/src/main/runs")
