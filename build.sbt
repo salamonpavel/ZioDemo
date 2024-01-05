@@ -3,11 +3,17 @@ ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / scalaVersion := "2.13.12"
 
 lazy val root = (project in file("."))
+  .enablePlugins(FlywayPlugin)
   .settings(
     name := "ZioDemo"
   )
 
 scalacOptions += "-Ymacro-annotations"
+
+flywayUrl := "jdbc:postgresql://localhost:5432/testdb"
+flywayUser := "postgres"
+flywayPassword := "postgres"
+flywayLocations := Seq("filesystem:database/src/main/runs")
 
 lazy val zioVersion = "2.0.19"
 lazy val zioConfigVersion = "4.0.0-RC16"
