@@ -1,0 +1,39 @@
+name: Run Tests
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: testdb
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Setup Scala and sbt
+        uses: olafurpg/setup-scala@v10
+
+      - name: Run database migrations
+        run: sbt flywayMigrate
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
+
+      - name: Run tests
+        run: sbt test
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
