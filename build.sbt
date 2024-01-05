@@ -14,6 +14,7 @@ flywayUrl := "jdbc:postgresql://localhost:5432/testdb"
 flywayUser := "postgres"
 flywayPassword := "postgres"
 flywayLocations := Seq("filesystem:database/src/main/runs")
+flywaySqlMigrationSuffixes := Seq(".sql",".ddl")
 
 lazy val zioVersion = "2.0.19"
 lazy val zioConfigVersion = "4.0.0-RC16"
