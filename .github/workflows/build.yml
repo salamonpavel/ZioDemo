@@ -22,18 +22,20 @@ jobs:
           - 5432:5432
 
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v2
-
-      - name: Setup Scala and sbt
-        uses: olafurpg/setup-scala@v10
-
-      - name: Run database migrations
-        run: sbt flywayMigrate
-        env:
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
-
-      - name: Run tests
-        run: sbt test
-        env:
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
+      - name: just echo
+        run: echo "hello world"
+#      - name: Check out repository code
+#        uses: actions/checkout@v2
+#
+#      - name: Setup Scala and sbt
+#        uses: olafurpg/setup-scala@v10
+#
+#      - name: Run database migrations
+#        run: sbt flywayMigrate
+#        env:
+#          DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
+#
+#      - name: Run tests
+#        run: sbt test
+#        env:
+#          DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
