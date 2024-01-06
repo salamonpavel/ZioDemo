@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION runs.get_actors(
+CREATE FUNCTION runs.get_actors(
     i_first_name             TEXT,
     i_last_name              TEXT
 ) RETURNS TABLE (

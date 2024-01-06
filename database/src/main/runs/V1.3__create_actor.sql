@@ -15,7 +15,7 @@
 -- Example:
 -- SELECT * FROM runs.create_actor('John', 'Doe');
 
-CREATE OR REPLACE FUNCTION runs.create_actor(
+CREATE FUNCTION runs.create_actor(
     IN  i_first_name           TEXT,
     IN  i_last_name            TEXT,
     OUT status                 INTEGER,

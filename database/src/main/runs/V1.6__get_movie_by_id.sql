@@ -18,7 +18,7 @@
  * 
  * This will return the movie with ID 1, if it exists.
  */
-CREATE OR REPLACE FUNCTION runs.get_movie_by_id(
+CREATE FUNCTION runs.get_movie_by_id(
     i_movie_id              INTEGER
 ) RETURNS TABLE (
     movie_id                INTEGER,
