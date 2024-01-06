@@ -31,8 +31,6 @@ jobs:
 
       - name: Run database migrations
         run: sbt flywayMigrate
-#        env:
-#          DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
 
       - name: Run tests
         run: sbt test
