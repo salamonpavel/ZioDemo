@@ -1,15 +1,15 @@
 package com.github.salamonpavel.zio.repository
 
-import com.github.salamonpavel.zio.database.{CreateActor, GetActorById, GetActors, PostgresDatabaseProvider, TransactorProvider}
+import com.github.salamonpavel.zio.database._
 import com.github.salamonpavel.zio.exception.DatabaseError
 import com.github.salamonpavel.zio.model.{Actor, CreateActorRequestBody, GetActorsParams}
 import org.junit.runner.RunWith
 import org.mockito.Mockito.{mock, when}
+import zio._
 import zio.config.typesafe.TypesafeConfigProvider
 import zio.test.Assertion.failsWithA
 import zio.test.junit.ZTestJUnitRunner
-import zio.test.{Spec, TestEnvironment, ZIOSpec, ZIOSpecDefault, assertTrue, assertZIO}
-import zio._
+import zio.test.{Spec, TestEnvironment, ZIOSpecDefault, assertTrue, assertZIO}
 
 @RunWith(classOf[ZTestJUnitRunner])
 class ActorsRepositorySpec extends ZIOSpecDefault {
@@ -51,11 +51,10 @@ class ActorsRepositorySpec extends ZIOSpecDefault {
         }.provide(
           ActorsRepositoryImpl.layer,
           PostgresDatabaseProvider.layer,
-          TransactorProvider.layer,
+          TransactorProvider.testLayer,
           GetActorById.layer,
           GetActors.layer,
-          CreateActor.layer,
-          zio.Scope.default
+          CreateActor.layer
         ),
 
         test("returns an expected instance of Actor") {
@@ -86,6 +85,19 @@ class ActorsRepositorySpec extends ZIOSpecDefault {
         }
       ),
       suite("createActor")(
+        test("returns an expected instance of Actor from postgres in docker container") {
+          for {
+            actor <- ActorsRepository.createActor(CreateActorRequestBody("John", "Newman"))
+          } yield assertTrue(actor.firstName == "John" && actor.lastName == "Newman")
+        }.provide(
+          ActorsRepositoryImpl.layer,
+          PostgresDatabaseProvider.layer,
+          TransactorProvider.testLayer,
+          GetActorById.layer,
+          GetActors.layer,
+          CreateActor.layer
+        ),
+
         test("returns an expected instance of Actor") {
           val expectedActor = Actor(1, "John", "Newman")
           for {
