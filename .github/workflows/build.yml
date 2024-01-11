@@ -1,7 +1,9 @@
 name: Run Tests
 
 on: 
-  workflow_dispatch
+  workflow_dispatch:
+    branches:
+      - feature/only-here
 
 jobs:
   test:
